@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="description" content="เขียนบันทึกส่วนตัว เลือก mood เพิ่มรูป และเลือกว่าจะเปิดเผยหรือเก็บเป็นความลับ"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Tanjainoto · เขียนบันทึก</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Sarabun:wght@300;400;500;600&family=Noto+Serif+JP:wght@300;400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --sage:#7a9e7e; --sage-lt:#a8c5a0; --sage-pale:#ddeadb;
+      --cream:#f5f0e8; --ivory:#faf7f2;
+      --earth:#8b6f47; --earth-dk:#4a3728; --earth-md:#c4a882;
+      --text:#3d3228; --text-s:#6b5a4a; --text-xs:#9c8878;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;} html{scroll-behavior:smooth;}
+    body{font-family:'Sarabun',sans-serif;background:var(--ivory);color:var(--text);overflow-x:hidden;}
+
+    /* NAV */
+    nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;background:rgba(250,247,242,0.95);backdrop-filter:blur(14px);border-bottom:1px solid rgba(196,168,130,0.18);}
+    .logo{font-family:'Playfair Display',serif;font-style:italic;font-size:1.3rem;color:var(--earth-dk);line-height:1;text-decoration:none;display:block;}
+    .logo-jp{font-family:'Noto Serif JP',serif;font-size:.55rem;color:var(--text-xs);letter-spacing:.06em;display:block;font-style:normal;margin-top:2px;}
+    .nav-right{display:flex;align-items:center;gap:1rem;}
+    .nav-date{font-size:.78rem;color:var(--text-xs);font-family:'Noto Serif JP',serif;}
+    .nav-status{font-size:.72rem;background:rgba(122,158,126,.12);color:var(--sage);padding:.28rem .75rem;border-radius:999px;font-weight:600;}
+
+    /* LAYOUT */
+    .page{display:grid;grid-template-columns:1fr 360px;gap:0;min-height:100vh;padding-top:62px;}
+
+    /* LEFT — EDITOR */
+    .editor-wrap{padding:3rem 3rem 6rem;border-right:1px solid rgba(196,168,130,0.15);position:relative;}
+
+    /* header */
+    .editor-header{margin-bottom:2rem;}
+    .editor-label{font-size:.68rem;letter-spacing:.18em;font-weight:700;text-transform:uppercase;color:var(--sage);margin-bottom:.5rem;}
+    .editor-date-input{
+      font-family:'Playfair Display',serif;font-style:italic;
+      font-size:1.1rem;color:var(--text-xs);background:transparent;border:none;outline:none;
+      cursor:pointer;
+    }
+
+    /* MOOD TAGS */
+    .mood-section{margin-bottom:1.5rem;}
+    .mood-label{font-size:.68rem;letter-spacing:.12em;font-weight:700;text-transform:uppercase;color:var(--text-xs);margin-bottom:.65rem;}
+    .mood-tags{display:flex;gap:.5rem;flex-wrap:wrap;}
+    .mood-tag{
+      padding:.32rem .85rem;border-radius:999px;font-size:.78rem;font-weight:500;
+      border:1.5px solid rgba(196,168,130,0.3);background:transparent;
+      color:var(--text-s);cursor:pointer;transition:all .18s;
+      font-family:'Sarabun',sans-serif;
+    }
+    .mood-tag:hover{border-color:var(--sage);color:var(--sage);}
+    .mood-tag.selected{background:var(--earth-dk);color:var(--cream);border-color:var(--earth-dk);}
+    .mood-tag[data-mood="heavy"].selected{background:#5a7a5a;border-color:#5a7a5a;}
+    .mood-tag[data-mood="ok"].selected{background:var(--earth);border-color:var(--earth);}
+    .mood-tag[data-mood="night"].selected{background:#5b4a7a;border-color:#5b4a7a;}
+    .mood-tag[data-mood="vent"].selected{background:#8b5a3a;border-color:#8b5a3a;}
+
+    /* TITLE INPUT */
+    .title-input{
+      width:100%;font-family:'Playfair Display',serif;font-size:1.8rem;
+      color:var(--earth-dk);background:transparent;border:none;outline:none;
+      line-height:1.3;margin-bottom:1.2rem;resize:none;overflow:hidden;
+      font-style:italic;
+    }
+    .title-input::placeholder{color:rgba(156,136,120,.4);}
+
+    /* DIVIDER */
+    .editor-divider{height:1px;background:repeating-linear-gradient(90deg,rgba(196,168,130,.3) 0,rgba(196,168,130,.3) 6px,transparent 6px,transparent 12px);margin-bottom:1.2rem;}
+
+    /* BODY TEXTAREA */
+    .body-input{
+      width:100%;min-height:380px;font-size:1rem;line-height:2;
+      color:var(--text-s);background:transparent;border:none;outline:none;
+      resize:none;font-family:'Sarabun',sans-serif;font-weight:300;
+    }
+    .body-input::placeholder{color:rgba(156,136,120,.35);}
+
+    /* lined paper effect */
+    .editor-paper{
+      position:relative;background:var(--cream);border-radius:20px;
+      padding:1.8rem 2rem;margin-bottom:1.5rem;
+      background-image:repeating-linear-gradient(transparent,transparent 31px,rgba(196,168,130,.12) 31px,rgba(196,168,130,.12) 32px);
+    }
+
+    /* IMAGE UPLOAD */
+    .img-section{margin-bottom:1.5rem;}
+    .img-label{font-size:.68rem;letter-spacing:.12em;font-weight:700;text-transform:uppercase;color:var(--text-xs);margin-bottom:.65rem;}
+    .img-upload-area{
+      border:1.5px dashed rgba(196,168,130,.4);border-radius:16px;
+      padding:1.5rem;text-align:center;cursor:pointer;transition:all .2s;
+      background:transparent;
+    }
+    .img-upload-area:hover{border-color:var(--sage);background:var(--sage-pale);}
+    .img-upload-area input{display:none;}
+    .img-upload-icon{font-size:1.8rem;display:block;margin-bottom:.4rem;}
+    .img-upload-text{font-size:.8rem;color:var(--text-xs);}
+    .img-preview-wrap{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:.8rem;}
+    .img-preview{
+      width:80px;height:80px;border-radius:12px;object-fit:cover;
+      border:1.5px solid rgba(196,168,130,.2);position:relative;display:inline-block;
+    }
+    .img-preview-item{position:relative;display:inline-block;}
+    .img-remove{
+      position:absolute;top:-6px;right:-6px;width:18px;height:18px;
+      background:var(--earth-dk);color:#fff;border-radius:50%;font-size:.65rem;
+      display:flex;align-items:center;justify-content:center;cursor:pointer;
+      border:none;line-height:1;
+    }
+
+    /* VISIBILITY */
+    .visibility-section{margin-bottom:1.5rem;}
+    .vis-label{font-size:.68rem;letter-spacing:.12em;font-weight:700;text-transform:uppercase;color:var(--text-xs);margin-bottom:.65rem;}
+    .vis-options{display:flex;gap:.6rem;}
+    .vis-btn{
+      padding:.38rem 1rem;border-radius:999px;font-size:.8rem;font-weight:500;
+      border:1.5px solid rgba(196,168,130,.3);background:transparent;
+      color:var(--text-s);cursor:pointer;transition:all .18s;font-family:'Sarabun',sans-serif;
+      display:flex;align-items:center;gap:.4rem;
+    }
+    .vis-btn.selected{background:var(--earth-dk);color:var(--cream);border-color:var(--earth-dk);}
+
+    /* ACTION BUTTONS */
+    .editor-actions{display:flex;gap:.8rem;align-items:center;}
+    .btn-save{
+      background:var(--sage);color:#fff;padding:.72rem 2rem;border-radius:999px;
+      font-size:.9rem;font-weight:600;border:none;cursor:pointer;
+      transition:all .2s;font-family:'Sarabun',sans-serif;
+    }
+    .btn-save:hover{background:var(--earth);transform:translateY(-1px);}
+    .btn-draft{
+      background:transparent;color:var(--text-xs);padding:.72rem 1.2rem;border-radius:999px;
+      font-size:.85rem;font-weight:500;border:1.5px solid rgba(196,168,130,.3);cursor:pointer;
+      transition:all .2s;font-family:'Sarabun',sans-serif;
+    }
+    .btn-draft:hover{border-color:var(--sage);color:var(--sage);}
+    .char-count{font-size:.72rem;color:var(--text-xs);margin-left:auto;}
+
+    /* RIGHT — PAST ENTRIES */
+    .entries-wrap{
+      padding:3rem 1.8rem 6rem;
+      background:var(--cream);
+      overflow-y:auto;max-height:calc(100vh - 62px);
+      position:sticky;top:62px;
+    }
+    .entries-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;}
+    .entries-title{font-family:'Playfair Display',serif;font-size:1rem;font-style:italic;color:var(--earth-dk);}
+    .entries-count{font-size:.7rem;color:var(--text-xs);}
+
+    /* ENTRY CARD */
+    .entry{
+      padding:1rem 1.1rem;border-radius:16px;margin-bottom:.9rem;
+      background:var(--ivory);cursor:pointer;
+      border-left:3px solid transparent;
+      transition:all .2s;
+    }
+    .entry:hover{transform:translateX(3px);box-shadow:0 4px 16px rgba(74,55,40,.08);}
+    .entry[data-mood="heavy"]{border-color:#7a9e7e;}
+    .entry[data-mood="ok"]{border-color:var(--earth-md);}
+    .entry[data-mood="night"]{border-color:#8b7bb5;}
+    .entry[data-mood="vent"]{border-color:#c47a5a;}
+
+    .entry-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem;}
+    .entry-mood{font-size:.72rem;color:var(--text-xs);}
+    .entry-date{font-size:.68rem;color:var(--text-xs);font-family:'Noto Serif JP',serif;}
+    .entry-title{font-family:'Playfair Display',serif;font-size:.92rem;font-style:italic;color:var(--earth-dk);line-height:1.4;margin-bottom:.3rem;}
+    .entry-preview{font-size:.78rem;color:var(--text-s);line-height:1.6;font-weight:300;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-clamp:2;-webkit-box-orient:vertical;}
+    .entry-vis{font-size:.62rem;color:var(--text-xs);margin-top:.4rem;opacity:.7;}
+
+    /* MONTH DIVIDER */
+    .month-label{font-size:.65rem;letter-spacing:.14em;font-weight:700;text-transform:uppercase;color:var(--text-xs);padding:.4rem 0;margin-bottom:.5rem;border-bottom:1px solid rgba(196,168,130,.2);}
+
+    /* SAVE TOAST */
+    .toast{
+      position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);
+      background:var(--earth-dk);color:var(--cream);
+      padding:.65rem 1.5rem;border-radius:999px;font-size:.85rem;
+      opacity:0;transition:all .3s;z-index:999;pointer-events:none;
+    }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+    /* RESPONSIVE */
+    @media(max-width:900px){
+      .page{grid-template-columns:1fr;}
+      .entries-wrap{position:static;max-height:none;border-top:1px solid rgba(196,168,130,.15);}
+      .editor-wrap{padding:2rem 1.5rem 3rem;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="logo">tanjainoto<span class="logo-jp">心の中のノート</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">หน้าแรก</a></li>
+    <li><a href="banthuk.html">บันทึก</a></li>
+    <li><a href="stories.html">Stories</a></li>
+    <li><a href="quiz.html">Quiz</a></li>
+    <li><a href="shop.html">Shop</a></li>
+  </ul>
+  <a href="banthuk.html" style="font-size:.82rem;color:var(--text-xs);text-decoration:none;">← บันทึกทั้งหมด</a>
+</nav>
+
+<div class="page">
+
+  <!-- EDITOR -->
+  <div class="editor-wrap">
+    <div class="editor-header">
+      <div class="editor-label">✦ เขียนบันทึกวันนี้</div>
+      <input type="date" class="editor-date-input" id="entryDate"/>
+    </div>
+
+    <!-- MOOD -->
+    <div class="mood-section">
+      <div class="mood-label">mood วันนี้</div>
+      <div class="mood-tags">
+        <button class="mood-tag" data-mood="heavy">🌧️ วันที่หนักหน่อย</button>
+        <button class="mood-tag" data-mood="ok">☀️ วันที่โอเค</button>
+        <button class="mood-tag" data-mood="night">🌙 ความคิดตอนดึก</button>
+        <button class="mood-tag" data-mood="vent">💭 แค่อยากระบาย</button>
+      </div>
+    </div>
+
+    <!-- PAPER -->
+    <div class="editor-paper">
+      <textarea class="title-input" id="titleInput" rows="1" placeholder="ชื่อเรื่อง... (หรือจะข้ามก็ได้)"></textarea>
+      <div class="editor-divider"></div>
+      <textarea class="body-input" id="bodyInput" placeholder="วันนี้รู้สึกยังไง... เขียนออกมาได้เลย ไม่มีใครตัดสิน 🌿"></textarea>
+    </div>
+
+    <!-- IMAGE -->
+    <div class="img-section">
+      <div class="img-label">แนบภาพ (ถ้ามี)</div>
+      <div class="img-upload-area" id="uploadArea" onclick="document.getElementById('imgInput').click()">
+        <input type="file" id="imgInput" accept="image/*" multiple/>
+        <span class="img-upload-icon">🖼️</span>
+        <div class="img-upload-text">แตะเพื่อเลือกภาพ</div>
+      </div>
+      <div class="img-preview-wrap" id="previewWrap"></div>
+    </div>
+
+    <!-- VISIBILITY -->
+    <div class="visibility-section">
+      <div class="vis-label">การมองเห็น</div>
+      <div class="vis-options">
+        <button class="vis-btn selected" data-vis="private">🔒 ส่วนตัว</button>
+        <button class="vis-btn" data-vis="public">🌿 เปิดเผย</button>
+      </div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="editor-actions">
+      <button class="btn-save" onclick="saveEntry()">บันทึก ✦</button>
+      <button class="btn-draft" onclick="saveDraft()">บันทึกฉบับร่าง</button>
+      <span class="char-count" id="charCount">0 ตัวอักษร</span>
+    </div>
+  </div>
+
+  <!-- PAST ENTRIES -->
+  <div class="entries-wrap">
+    <div class="entries-header">
+      <div class="entries-title">บันทึกที่ผ่านมา</div>
+      <div class="entries-count" id="entryCount">0 หน้า</div>
+    </div>
+
+    <div id="entriesList">
+      <!-- พฤษภาคม -->
+      <div class="month-label">พฤษภาคม 2568</div>
+
+      <div class="entry" data-mood="night">
+        <div class="entry-top">
+          <span class="entry-mood">🌙 ความคิดตอนดึก</span>
+          <span class="entry-date">13 พ.ค.</span>
+        </div>
+        <div class="entry-title">บางคืนก็แค่อยากให้มีใครบอกว่าเหนื่อยก็พักได้นะ</div>
+        <div class="entry-preview">นอนไม่หลับอีกแล้ว นอนอยู่บนเตียง แต่หัวไม่ยอมหยุด คิดเรื่องงาน คิดเรื่องที่พูดไปเมื่อกี้...</div>
+        <div class="entry-vis">🔒 ส่วนตัว</div>
+      </div>
+
+      <div class="entry" data-mood="heavy">
+        <div class="entry-top">
+          <span class="entry-mood">🌧️ วันที่หนักหน่อย</span>
+          <span class="entry-date">2 พ.ค.</span>
+        </div>
+        <div class="entry-title">วันนี้ไม่ได้ทำอะไรเลย แล้วก็รู้สึกผิดกับตัวเอง</div>
+        <div class="entry-preview">ตื่นมาตั้งใจว่าจะทำสิ่งนั้นสิ่งนี้ แต่สุดท้ายก็แค่นอนดูซีรี่ส์จนเย็น...</div>
+        <div class="entry-vis">🔒 ส่วนตัว</div>
+      </div>
+
+      <!-- เมษายน -->
+      <div class="month-label" style="margin-top:1.2rem;">เมษายน 2568</div>
+
+      <div class="entry" data-mood="ok">
+        <div class="entry-top">
+          <span class="entry-mood">☀️ วันที่โอเค</span>
+          <span class="entry-date">28 เม.ย.</span>
+        </div>
+        <div class="entry-title">วันนี้ซื้อกาแฟแก้วโปรด แล้วรู้สึกว่าโลกดีขึ้น</div>
+        <div class="entry-preview">ไม่ได้มีอะไรพิเศษ แค่อากาศดี เดินออกไปข้างนอก...</div>
+        <div class="entry-vis">🌿 เปิดเผย</div>
+      </div>
+
+      <div class="entry" data-mood="vent">
+        <div class="entry-top">
+          <span class="entry-mood">💭 แค่อยากระบาย</span>
+          <span class="entry-date">20 เม.ย.</span>
+        </div>
+        <div class="entry-title">ทำไมการบอกว่าฉันต้องการความช่วยเหลือถึงรู้สึกยากจัง</div>
+        <div class="entry-preview">รู้อยู่แก่ใจว่าเหนื่อย รู้ว่าต้องการใครสักคน แต่พอจะพูดออกไปจริงๆ มันติดอยู่ที่คอ...</div>
+        <div class="entry-vis">🔒 ส่วนตัว</div>
+      </div>
+
+      <div class="entry" data-mood="night">
+        <div class="entry-top">
+          <span class="entry-mood">🌙 ความคิดตอนดึก</span>
+          <span class="entry-date">15 เม.ย.</span>
+        </div>
+        <div class="entry-title">ตอนดึกๆ เราจะเห็นตัวเองชัดขึ้น หรือแค่ overthink เอง?</div>
+        <div class="entry-preview">มีบางอย่างที่รู้สึกได้ชัดเจนมากตอนกลางคืน...</div>
+        <div class="entry-vis">🔒 ส่วนตัว</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // set today's date
+  const today = new Date();
+  document.getElementById('entryDate').value = today.toISOString().split('T')[0];
+
+  // nav date
+  const days = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัส','ศุกร์','เสาร์'];
+  const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  document.getElementById('navDate').textContent = `${days[today.getDay()]} ${today.getDate()} ${months[today.getMonth()]}`;
+
+  // auto-resize textarea
+  document.querySelectorAll('textarea').forEach(el => {
+    el.addEventListener('input', () => {
+      if(el.id === 'titleInput'){ el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
+    });
+  });
+
+  // char count
+  document.getElementById('bodyInput').addEventListener('input', function(){
+    document.getElementById('charCount').textContent = this.value.length + ' ตัวอักษร';
+  });
+
+  // mood tags
+  document.querySelectorAll('.mood-tag').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.mood-tag').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
+  });
+
+  // visibility
+  document.querySelectorAll('.vis-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.vis-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      const navStatus = document.querySelector('.nav-status');
+      navStatus.textContent = btn.dataset.vis === 'private' ? '✦ ส่วนตัว' : '✦ เปิดเผย';
+    });
+  });
+
+  // image upload
+  document.getElementById('imgInput').addEventListener('change', function(){
+    const wrap = document.getElementById('previewWrap');
+    Array.from(this.files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const item = document.createElement('div');
+        item.className = 'img-preview-item';
+        item.innerHTML = `
+          <img src="${e.target.result}" class="img-preview"/>
+          <button class="img-remove" onclick="this.parentElement.remove()">×</button>
+        `;
+        wrap.appendChild(item);
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+
+  // drag & drop
+  const uploadArea = document.getElementById('uploadArea');
+  uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.style.borderColor = 'var(--sage)'; });
+  uploadArea.addEventListener('dragleave', () => { uploadArea.style.borderColor = ''; });
+  uploadArea.addEventListener('drop', e => {
+    e.preventDefault(); uploadArea.style.borderColor = '';
+    const input = document.getElementById('imgInput');
+    input.files = e.dataTransfer.files;
+    input.dispatchEvent(new Event('change'));
+  });
+
+  // show toast
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  // save entry
+  function saveEntry(){
+    const title = document.getElementById('titleInput').value.trim();
+    const body  = document.getElementById('bodyInput').value.trim();
+    if(!body){ showToast('เขียนอะไรก่อนนะ 🌿'); return; }
+
+    const mood = document.querySelector('.mood-tag.selected');
+    const vis  = document.querySelector('.vis-btn.selected');
+    const moodText = mood ? mood.textContent : '—';
+    const visText  = vis  ? vis.textContent  : '🔒 ส่วนตัว';
+    const moodKey  = mood ? mood.dataset.mood : 'ok';
+
+    const d = new Date();
+    const dateStr = `${d.getDate()} ${months[d.getMonth()]}.`;
+
+    // add to list
+    const list = document.getElementById('entriesList');
+    const el = document.createElement('div');
+    el.className = 'entry'; el.dataset.mood = moodKey;
+    el.innerHTML = `
+      <div class="entry-top">
+        <span class="entry-mood">${moodText}</span>
+        <span class="entry-date">${dateStr}</span>
+      </div>
+      <div class="entry-title">${title || 'ไม่มีชื่อเรื่อง'}</div>
+      <div class="entry-preview">${body.substring(0,80)}...</div>
+      <div class="entry-vis">${visText}</div>
+    `;
+    list.insertBefore(el, list.children[1]);
+
+    // update count
+    const count = list.querySelectorAll('.entry').length;
+    document.getElementById('entryCount').textContent = count + ' หน้า';
+
+    // clear
+    document.getElementById('titleInput').value = '';
+    document.getElementById('bodyInput').value = '';
+    document.getElementById('charCount').textContent = '0 ตัวอักษร';
+    document.getElementById('previewWrap').innerHTML = '';
+    document.querySelectorAll('.mood-tag').forEach(b => b.classList.remove('selected'));
+
+    showToast('บันทึกแล้ว ✦ ' + (vis?.dataset.vis === 'public' ? 'เปิดเผยแล้ว' : 'เก็บไว้ส่วนตัว'));
+  }
+
+  function saveDraft(){
+    showToast('บันทึกฉบับร่างแล้ว 🌿');
+  }
+</script>
+</body>
+</html>

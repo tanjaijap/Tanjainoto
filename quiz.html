@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="description" content="แบบทดสอบจิตวิทยาที่อ้างอิงงานวิจัย — วัด Attachment Style, Inner Child และ Emotion Regulation เพื่อเข้าใจตัวเองมากขึ้น"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Tanjainoto · Quiz จิตวิทยา</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Sarabun:wght@300;400;500;600&family=Noto+Serif+JP:wght@300;400&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --sage:#7a9e7e;--sage-lt:#a8c5a0;--sage-pale:#ddeadb;--sage-mist:#eef5ec;
+      --cream:#f5f0e8;--ivory:#faf7f2;
+      --earth:#8b6f47;--earth-dk:#4a3728;--earth-md:#c4a882;
+      --text:#3d3228;--text-s:#6b5a4a;--text-xs:#9c8878;
+      --night:#1a1028;--witch-md:#b8a8d4;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;} html{scroll-behavior:smooth;}
+    body{font-family:'Sarabun',sans-serif;background:var(--ivory);color:var(--text);overflow-x:hidden;}
+
+    /* NAV */
+    nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;background:rgba(250,247,242,0.93);backdrop-filter:blur(14px);border-bottom:1px solid rgba(196,168,130,0.18);}
+    .logo{font-family:'Playfair Display',serif;font-style:italic;font-size:1.3rem;color:var(--earth-dk);text-decoration:none;line-height:1;}
+    .logo-jp{font-family:'Noto Serif JP',serif;font-size:.55rem;color:var(--text-xs);letter-spacing:.06em;display:block;font-style:normal;margin-top:2px;}
+    .nav-links{display:flex;gap:1.8rem;list-style:none;}
+    .nav-links a{text-decoration:none;color:var(--text-s);font-size:.86rem;transition:color .2s;}
+    .nav-links a:hover,.nav-links a.active{color:var(--sage);}
+    .nav-links a.active{font-weight:600;}
+    @media(max-width:768px){.nav-links{display:none;}}
+
+    /* SCREENS */
+    .screen{display:none;min-height:100vh;padding-top:62px;}
+    .screen.active{display:block;}
+
+    /* ══ SCREEN 1: QUIZ SELECTION ══ */
+    .select-wrap{
+      max-width:900px;margin:0 auto;padding:4rem 2rem 6rem;
+    }
+    .select-header{text-align:center;margin-bottom:3.5rem;}
+    .select-label{font-size:.7rem;letter-spacing:.18em;font-weight:700;text-transform:uppercase;color:var(--sage);margin-bottom:.6rem;}
+    .select-title{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);color:var(--earth-dk);line-height:1.25;margin-bottom:.5rem;}
+    .select-title em{font-style:italic;color:var(--sage);}
+    .select-jp{font-family:'Noto Serif JP',serif;font-size:.75rem;color:var(--text-xs);letter-spacing:.1em;display:block;margin-bottom:.8rem;}
+    .select-desc{font-size:.95rem;color:var(--text-s);font-weight:300;line-height:1.85;}
+
+    .quiz-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;margin-top:2.5rem;}
+
+    .quiz-card{
+      background:var(--cream);border-radius:24px;padding:2rem 1.6rem;
+      border:1.5px solid rgba(196,168,130,.18);
+      cursor:pointer;transition:all .25s;
+      display:flex;flex-direction:column;
+      text-align:left;position:relative;overflow:hidden;
+    }
+    .quiz-card::before{
+      content:'';position:absolute;top:-60px;right:-60px;
+      width:160px;height:160px;border-radius:50%;
+      opacity:.12;transition:opacity .3s;
+    }
+    .quiz-card:hover{transform:translateY(-6px);box-shadow:0 18px 48px rgba(74,55,40,.12);}
+    .quiz-card:hover::before{opacity:.2;}
+    .quiz-card[data-quiz="attachment"]::before{background:var(--sage);}
+    .quiz-card[data-quiz="inner"]::before{background:var(--witch-md);}
+    .quiz-card[data-quiz="emotion"]::before{background:var(--earth-md);}
+
+    .qc-icon{font-size:2.5rem;margin-bottom:1rem;display:block;}
+    .qc-cat{font-size:.65rem;letter-spacing:.14em;font-weight:700;text-transform:uppercase;margin-bottom:.5rem;}
+    .quiz-card[data-quiz="attachment"] .qc-cat{color:var(--sage);}
+    .quiz-card[data-quiz="inner"] .qc-cat{color:var(--witch-md);}
+    .quiz-card[data-quiz="emotion"] .qc-cat{color:var(--earth);}
+    .qc-name{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--earth-dk);line-height:1.4;margin-bottom:.5rem;}
+    .qc-desc{font-size:.8rem;color:var(--text-s);line-height:1.7;font-weight:300;flex:1;}
+    .qc-meta{display:flex;align-items:center;justify-content:space-between;margin-top:1.2rem;padding-top:1rem;border-top:1px solid rgba(196,168,130,.15);}
+    .qc-time{font-size:.72rem;color:var(--text-xs);}
+    .qc-source{font-size:.68rem;color:var(--text-xs);font-style:italic;}
+    .qc-btn{
+      display:block;text-align:center;
+      background:var(--earth-dk);color:var(--cream);
+      padding:.55rem 1.3rem;border-radius:999px;
+      font-size:.82rem;font-weight:600;
+      margin-top:1.2rem;transition:background .2s;border:none;cursor:pointer;
+      font-family:'Sarabun',sans-serif;width:100%;
+    }
+    .quiz-card[data-quiz="attachment"]:hover .qc-btn{background:var(--sage);}
+    .quiz-card[data-quiz="inner"]:hover .qc-btn{background:#6b5b8e;}
+    .quiz-card[data-quiz="emotion"]:hover .qc-btn{background:var(--earth);}
+
+    /* ══ SCREEN 2: TAKING QUIZ ══ */
+    .quiz-wrap{max-width:680px;margin:0 auto;padding:3.5rem 2rem 6rem;}
+
+    /* progress */
+    .quiz-progress{margin-bottom:2.5rem;}
+    .progress-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem;}
+    .progress-label{font-size:.75rem;color:var(--text-xs);}
+    .progress-num{font-size:.75rem;font-weight:600;color:var(--sage);}
+    .progress-bar{height:4px;background:rgba(196,168,130,.2);border-radius:2px;overflow:hidden;}
+    .progress-fill{height:100%;background:var(--sage);border-radius:2px;transition:width .4s ease;}
+
+    /* question */
+    .question-wrap{margin-bottom:2rem;}
+    .question-num{font-size:.68rem;letter-spacing:.14em;font-weight:700;text-transform:uppercase;color:var(--sage);margin-bottom:.7rem;}
+    .question-text{font-family:'Playfair Display',serif;font-size:1.25rem;color:var(--earth-dk);line-height:1.5;margin-bottom:.4rem;}
+    .question-source{font-size:.7rem;color:var(--text-xs);font-style:italic;margin-bottom:1.5rem;}
+
+    /* options — Likert scale */
+    .options{display:flex;flex-direction:column;gap:.65rem;}
+    .option{
+      display:flex;align-items:center;gap:1rem;
+      padding:.9rem 1.2rem;border-radius:16px;
+      background:var(--cream);border:1.5px solid rgba(196,168,130,.18);
+      cursor:pointer;transition:all .18s;
+    }
+    .option:hover{border-color:var(--sage-lt);background:var(--sage-mist);}
+    .option.selected{border-color:var(--sage);background:var(--sage-pale);}
+    .option-dot{
+      width:20px;height:20px;border-radius:50%;
+      border:2px solid rgba(196,168,130,.4);flex-shrink:0;
+      transition:all .18s;display:flex;align-items:center;justify-content:center;
+    }
+    .option.selected .option-dot{background:var(--sage);border-color:var(--sage);}
+    .option.selected .option-dot::after{content:'';width:6px;height:6px;background:#fff;border-radius:50%;}
+    .option-text{font-size:.9rem;color:var(--text-s);line-height:1.5;}
+    .option.selected .option-text{color:var(--earth-dk);font-weight:500;}
+
+    /* nav buttons */
+    .quiz-nav{display:flex;align-items:center;justify-content:space-between;margin-top:2rem;}
+    .btn-prev{background:transparent;color:var(--text-xs);border:1.5px solid rgba(196,168,130,.3);padding:.65rem 1.4rem;border-radius:999px;font-size:.85rem;cursor:pointer;transition:all .2s;font-family:'Sarabun',sans-serif;}
+    .btn-prev:hover{border-color:var(--sage);color:var(--sage);}
+    .btn-next{background:var(--sage);color:#fff;border:none;padding:.65rem 1.8rem;border-radius:999px;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:'Sarabun',sans-serif;}
+    .btn-next:hover{background:var(--earth);transform:translateY(-1px);}
+    .btn-next:disabled{opacity:.4;cursor:default;transform:none;}
+
+    /* ══ SCREEN 3: RESULT ══ */
+    .result-wrap{max-width:720px;margin:0 auto;padding:3.5rem 2rem 6rem;}
+
+    .result-header{text-align:center;margin-bottom:2.5rem;}
+    .result-label{font-size:.7rem;letter-spacing:.16em;font-weight:700;text-transform:uppercase;color:var(--sage);margin-bottom:.6rem;}
+    .result-name{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.6rem);font-style:italic;color:var(--earth-dk);line-height:1.25;margin-bottom:.4rem;}
+    .result-jp{font-family:'Noto Serif JP',serif;font-size:.75rem;color:var(--text-xs);letter-spacing:.1em;display:block;margin-bottom:1.5rem;}
+
+    /* result card */
+    .result-card{
+      background:var(--cream);border-radius:24px;padding:2rem;
+      border:1.5px solid rgba(196,168,130,.2);margin-bottom:1.5rem;
+    }
+    .result-card-icon{font-size:3rem;margin-bottom:1rem;display:block;text-align:center;}
+    .result-card-title{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--earth-dk);text-align:center;margin-bottom:1rem;}
+    .result-card-desc{font-size:.95rem;color:var(--text-s);line-height:1.9;font-weight:300;margin-bottom:1.2rem;}
+    .result-card-desc strong{color:var(--earth-dk);font-weight:600;}
+
+    /* score bar */
+    .score-bars{margin-bottom:1.2rem;}
+    .score-bar-item{margin-bottom:.8rem;}
+    .score-bar-label{display:flex;justify-content:space-between;font-size:.78rem;color:var(--text-s);margin-bottom:.3rem;}
+    .score-bar-track{height:6px;background:rgba(196,168,130,.2);border-radius:3px;overflow:hidden;}
+    .score-bar-fill{height:100%;border-radius:3px;transition:width 1s ease;}
+
+    /* what it means */
+    .result-section{margin-bottom:1.5rem;}
+    .result-section-title{font-size:.72rem;letter-spacing:.12em;font-weight:700;text-transform:uppercase;color:var(--sage);margin-bottom:.8rem;}
+    .result-points{display:flex;flex-direction:column;gap:.6rem;}
+    .result-point{display:flex;align-items:flex-start;gap:.8rem;font-size:.88rem;color:var(--text-s);line-height:1.7;}
+    .result-point-icon{flex-shrink:0;font-size:1rem;}
+
+    /* next steps */
+    .next-steps{background:var(--sage-pale);border-radius:20px;padding:1.5rem;margin-bottom:1.5rem;}
+    .next-steps-title{font-size:.72rem;letter-spacing:.12em;font-weight:700;text-transform:uppercase;color:var(--sage);margin-bottom:.8rem;}
+    .next-step-item{display:flex;align-items:flex-start;gap:.8rem;font-size:.88rem;color:var(--text-s);line-height:1.7;margin-bottom:.5rem;}
+    .next-step-icon{flex-shrink:0;}
+
+    /* source */
+    .result-source{font-size:.72rem;color:var(--text-xs);font-style:italic;margin-bottom:1.5rem;padding:.7rem 1rem;background:rgba(196,168,130,.1);border-radius:12px;line-height:1.7;}
+
+    /* FEEDBACK */
+    .feedback-section{
+      background:var(--ivory);border:1.5px solid rgba(196,168,130,.2);
+      border-radius:20px;padding:1.5rem;margin-bottom:1.5rem;text-align:center;
+    }
+    .feedback-title{font-size:.88rem;font-weight:600;color:var(--earth-dk);margin-bottom:.4rem;}
+    .feedback-desc{font-size:.8rem;color:var(--text-xs);margin-bottom:1.2rem;}
+    .feedback-btns{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;}
+    .feedback-btn{
+      padding:.5rem 1.3rem;border-radius:999px;font-size:.82rem;font-weight:500;
+      border:1.5px solid rgba(196,168,130,.3);background:transparent;
+      cursor:pointer;transition:all .2s;font-family:'Sarabun',sans-serif;
+    }
+    .feedback-btn.yes{color:var(--sage);}
+    .feedback-btn.yes:hover,.feedback-btn.yes.selected{background:var(--sage);color:#fff;border-color:var(--sage);}
+    .feedback-btn.partial{color:var(--earth);}
+    .feedback-btn.partial:hover,.feedback-btn.partial.selected{background:var(--earth);color:#fff;border-color:var(--earth);}
+    .feedback-btn.no{color:#c47a5a;}
+    .feedback-btn.no:hover,.feedback-btn.no.selected{background:#c47a5a;color:#fff;border-color:#c47a5a;}
+    .feedback-thanks{font-size:.82rem;color:var(--sage);margin-top:.8rem;display:none;}
+    .feedback-thanks.show{display:block;}
+
+    /* action buttons */
+    .result-actions{display:flex;gap:.8rem;flex-wrap:wrap;}
+    .btn-retake{background:transparent;color:var(--text-s);border:1.5px solid rgba(196,168,130,.3);padding:.7rem 1.5rem;border-radius:999px;font-size:.88rem;cursor:pointer;transition:all .2s;font-family:'Sarabun',sans-serif;}
+    .btn-retake:hover{border-color:var(--sage);color:var(--sage);}
+    .btn-other{background:var(--earth-dk);color:var(--cream);border:none;padding:.7rem 1.8rem;border-radius:999px;font-size:.88rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:'Sarabun',sans-serif;}
+    .btn-other:hover{background:var(--sage);}
+
+    @media(max-width:768px){
+      .quiz-cards{grid-template-columns:1fr;}
+    }
+
+    /* TOOLTIP */
+    .tip{
+      position:relative;display:inline;
+      border-bottom:1.5px dashed rgba(122,158,126,.5);
+      cursor:help;color:inherit;
+    }
+    .tip-box{
+      position:absolute;bottom:calc(100% + 8px);left:50%;
+      transform:translateX(-50%);
+      background:var(--earth-dk);color:var(--cream);
+      font-size:.76rem;line-height:1.65;font-weight:300;
+      padding:.65rem 1rem;border-radius:12px;
+      width:230px;text-align:left;
+      pointer-events:none;opacity:0;transition:opacity .2s;
+      z-index:999;font-family:'Sarabun',sans-serif;
+      box-shadow:0 8px 24px rgba(74,55,40,.2);
+    }
+    .tip-box::after{
+      content:'';position:absolute;top:100%;left:50%;
+      transform:translateX(-50%);
+      border:5px solid transparent;
+      border-top-color:var(--earth-dk);
+    }
+    .tip:hover .tip-box,.tip.show .tip-box{opacity:1;}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">tanjainoto<span class="logo-jp">心の中のノート</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">หน้าแรก</a></li>
+    <li><a href="banthuk.html">บันทึก</a></li>
+    <li><a href="stories.html">Stories</a></li>
+    <li><a href="shop.html">Shop</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="write.html" class="nav-pill">เริ่มจด 🌿</a></li>
+  </ul>
+</nav>
+
+<!-- SCREEN 1: SELECT -->
+<div class="screen active" id="screenSelect">
+  <div class="select-wrap">
+    <div class="select-header">
+      <p class="select-label">✦ Quiz</p>
+      <h1 class="select-title">รู้จักตัวเองผ่าน<em>คำถาม</em></h1>
+      <span class="select-jp">自分自身を知るための問い</span>
+      <p class="select-desc">ทุก quiz ออกแบบจากงานวิจัยจิตวิทยาที่ได้รับการตรวจสอบแล้ว ไม่มีคำตอบผิดถูก แค่ตอบตามความรู้สึกจริงๆ</p>
+    </div>
+
+    <div class="quiz-cards">
+      <div class="quiz-card" data-quiz="attachment" onclick="startQuiz('attachment')">
+        <span class="qc-icon">💛</span>
+        <div class="qc-cat">Attachment Style</div>
+        <h2 class="qc-name">เธอผูกพันกับคนอื่นยังไง?</h2>
+        <p class="qc-desc">สำรวจรูปแบบความผูกพันของตัวเอง ว่าเธอสร้างและรักษาความสัมพันธ์กับคนอื่นอย่างไร</p>
+        <div class="qc-meta">
+          <span class="qc-time">⏱ ~8 นาที · 15 ข้อ</span>
+          <span class="qc-source"><span class="tip"><span class="tip">ECR-R Scale<span class="tip-box">Experiences in Close Relationships-Revised แบบวัดความผูกพันที่ได้รับการยืนยันทางวิทยาศาสตร์</span></span><span class="tip-box">Experiences in Close Relationships — Revised แบบวัดความผูกพันที่ได้รับการยืนยันทางวิทยาศาสตร์</span></span></span>
+        </div>
+        <button class="qc-btn">เริ่ม Quiz นี้</button>
+      </div>
+
+      <div class="quiz-card" data-quiz="inner" onclick="startQuiz('inner')">
+        <span class="qc-icon">🌱</span>
+        <div class="qc-cat">Inner Child</div>
+        <h2 class="qc-name">เด็กน้อยในตัวเธอเป็นยังไง?</h2>
+        <p class="qc-desc">ค้นหาว่า Early Life Experiences ส่งผลต่อความรู้สึกและพฤติกรรมของเธอในปัจจุบันยังไง</p>
+        <div class="qc-meta">
+          <span class="qc-time">⏱ ~8 นาที · 15 ข้อ</span>
+          <span class="qc-source"><span class="tip"><span class="tip">Young Schema Q.<span class="tip-box">Young Schema Questionnaire แบบวัดรูปแบบความคิดที่ฝังมาตั้งแต่วัยเด็ก</span></span><span class="tip-box">Young Schema Questionnaire แบบวัด Early Maladaptive Schemas หรือรูปแบบความคิดที่ฝังมาตั้งแต่วัยเด็ก</span></span></span>
+        </div>
+        <button class="qc-btn">เริ่ม Quiz นี้</button>
+      </div>
+
+      <div class="quiz-card" data-quiz="emotion" onclick="startQuiz('emotion')">
+        <span class="qc-icon">🌊</span>
+        <div class="qc-cat">Emotion Regulation</div>
+        <h2 class="qc-name">เธอจัดการอารมณ์ตัวเองยังไง?</h2>
+        <p class="qc-desc">สำรวจว่าเธอมีแนวโน้มจะ suppress หรือ reappraise อารมณ์ของตัวเองเมื่อเผชิญกับสถานการณ์ยาก</p>
+        <div class="qc-meta">
+          <span class="qc-time">⏱ ~8 นาที · 15 ข้อ</span>
+          <span class="qc-source"><span class="tip">ERQ (Gross & John)<span class="tip-box">Emotion Regulation Questionnaire แบบวัดรูปแบบการจัดการอารมณ์ที่ใช้กันอย่างแพร่หลายในงานวิจัย</span></span></span>
+        </div>
+        <button class="qc-btn">เริ่ม Quiz นี้</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 2: QUESTIONS -->
+<div class="screen" id="screenQuiz">
+  <div class="quiz-wrap">
+    <div class="quiz-progress">
+      <div class="progress-header">
+        <span class="progress-label" id="progressLabel">ข้อ 1 จาก 15</span>
+        <span class="progress-num" id="progressPct">0%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    </div>
+
+    <div class="question-wrap">
+      <div class="question-num" id="questionNum">ข้อที่ 1</div>
+      <div class="question-text" id="questionText"></div>
+      <div class="question-source" id="questionSource"></div>
+      <div class="options" id="optionsWrap"></div>
+    </div>
+
+    <div class="quiz-nav">
+      <button class="btn-prev" id="btnPrev" onclick="prevQ()">← ย้อนกลับ</button>
+      <button class="btn-next" id="btnNext" onclick="nextQ()" disabled>ถัดไป →</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 3: RESULT -->
+<div class="screen" id="screenResult">
+  <div class="result-wrap" id="resultContent"></div>
+</div>
+
+<script>
+const QUIZZES = {
+  attachment: {
+    name: "Attachment Style",
+    title: "รูปแบบความผูกพันของเธอ",
+    source: "อ้างอิง: Experiences in Close Relationships — Revised (ECR-R), Fraley, Waller & Brennan (2000), Journal of Personality and Social Psychology",
+    questions: [
+      { text: "ฉันกังวลว่าคนที่รักจะทิ้งฉันไป", source: "ECR-R Anxiety Subscale" },
+      { text: "ฉันไม่สบายใจเมื่อต้องพึ่งพาคนอื่น", source: "ECR-R Avoidance Subscale" },
+      { text: "ฉันต้องการการยืนยันบ่อยๆ ว่าอีกฝ่ายยังรักฉันอยู่", source: "ECR-R Anxiety Subscale" },
+      { text: "ฉันรู้สึกไม่สบายใจเมื่อคนอื่นเข้าใกล้ฉันมากเกินไป", source: "ECR-R Avoidance Subscale" },
+      { text: "ฉันมักกังวลว่าตัวเองไม่ดีพอสำหรับคนที่รัก", source: "ECR-R Anxiety Subscale" },
+      { text: "ฉันไม่ค่อยเปิดใจบอกความรู้สึกให้คนอื่นฟัง", source: "ECR-R Avoidance Subscale" },
+      { text: "เมื่อคนที่ฉันรักไม่ตอบ ฉันรู้สึกกังวลมาก", source: "ECR-R Anxiety Subscale" },
+      { text: "ฉันรู้สึกสบายใจดีเมื่ออยู่คนเดียวโดยไม่มีความสัมพันธ์ใกล้ชิด", source: "ECR-R Avoidance Subscale" },
+      { text: "ฉันกลัวว่าเมื่อคนรู้จักตัวจริงของฉัน เขาจะไม่ชอบ", source: "ECR-R Anxiety Subscale" },
+      { text: "ฉันรู้สึกอึดอัดเมื่อต้องพูดถึงความรู้สึกในความสัมพันธ์", source: "ECR-R Avoidance Subscale" },
+      { text: "ฉันต้องการความสนิทแนบแน่นมากกว่าที่คนอื่นต้องการจากฉัน", source: "ECR-R Anxiety Subscale" },
+      { text: "ฉันรู้สึกดีกว่าเมื่อพึ่งพาตัวเองมากกว่าพึ่งพาคนอื่น", source: "ECR-R Avoidance Subscale" },
+      { text: "ฉันรู้สึกเจ็บปวดมากเมื่อความสัมพันธ์สิ้นสุดลง แม้ระยะสั้น", source: "ECR-R Anxiety Subscale" },
+      { text: "ฉันไม่ค่อยสังเกตว่าตัวเองต้องการความใกล้ชิดจากใครสักคน", source: "ECR-R Avoidance Subscale" },
+      { text: "ฉันรู้สึกว่าความสัมพันธ์ที่ดีทำให้ชีวิตสมบูรณ์ขึ้น", source: "ECR-R General" },
+    ],
+    options: [
+      {text:"ไม่เลย",val:1},{text:"นานๆ ครั้ง",val:2},{text:"บางครั้ง",val:3},{text:"บ่อยครั้ง",val:4},{text:"ใช่มากๆ",val:5}
+    ],
+    getResult: (answers) => {
+      const anxiety = [0,2,4,6,8,10,12].reduce((s,i)=>s+answers[i],0)/7;
+      const avoid   = [1,3,5,7,9,11,13].reduce((s,i)=>s+answers[i],0)/6;
+      if(anxiety<3 && avoid<3) return "secure";
+      if(anxiety>=3 && avoid<3) return "anxious";
+      if(anxiety<3 && avoid>=3) return "avoidant";
+      return "disorganized";
+    },
+    results: {
+      secure:{
+        icon:"🌿",name:"Secure Attachment · ผูกพันอย่างมั่นคง",jp:"安定型アタッチメント",
+        desc:"เธอมีรูปแบบความผูกพันที่มั่นคง สามารถสร้างความใกล้ชิดกับคนอื่นได้โดยไม่กลัวการถูกทิ้ง และสามารถพึ่งพาตัวเองได้โดยไม่หลีกเลี่ยงความสัมพันธ์ นี่คือรูปแบบที่ส่งผลดีที่สุดต่อสุขภาพจิตและความสัมพันธ์",
+        scores:[{label:"ความมั่นคง",val:85},{label:"ความไว้ใจ",val:80},{label:"การพึ่งพาสมดุล",val:78}],
+        scoreColors:["#7a9e7e","#7a9e7e","#7a9e7e"],
+        points:["เธอสามารถเปิดใจได้โดยไม่กลัวมากเกินไป","เธอรับมือกับการขัดแย้งในความสัมพันธ์ได้ค่อนข้างดี","เธอรู้จักขอความช่วยเหลือเมื่อต้องการ"],
+        next:["ดูแลรักษาคุณภาพความสัมพันธ์ที่มีอยู่","ช่วยเพื่อนที่มี insecure attachment ด้วยความเข้าใจ","ทบทวนว่ามีจุดไหนที่อยากพัฒนาเพิ่มเติม"]
+      },
+      anxious:{
+        icon:"🌊",name:"Anxious Attachment · ผูกพันแบบวิตกกังวล",jp:"不安型アタッチメント",
+        desc:"เธอมีแนวโน้มกังวลเรื่องความสัมพันธ์และกลัวการถูกทิ้ง มักต้องการการยืนยันจากคนที่รัก บ่อยครั้งที่ความต้องการความใกล้ชิดของเธอมีมากกว่าที่คนอื่นจะตอบสนองได้ นี่ไม่ใช่ข้อบกพร่อง แต่คือรูปแบบที่พัฒนามาจากประสบการณ์ในอดีต",
+        scores:[{label:"ความกังวลในความสัมพันธ์",val:75},{label:"ความต้องการการยืนยัน",val:70},{label:"กลัวการถูกทิ้ง",val:72}],
+        scoreColors:["#c4a882","#c4a882","#c4a882"],
+        points:["เธออาจ overthink เรื่องความสัมพันธ์บ่อยๆ","เธอรู้สึกเจ็บปวดมากเมื่อคนที่รักไม่ตอบสนอง","เธอมีความสามารถรักได้ลึกมาก แต่ก็เจ็บได้ลึกด้วย"],
+        next:["ฝึก self-soothing เมื่อรู้สึกกังวล — หยุดหายใจก่อนตอบสนอง","ลองพูดความต้องการของตัวเองตรงๆ แทนการรอให้เขาเดา","ศึกษา Attachment Theory เพื่อเข้าใจรูปแบบของตัวเองมากขึ้น"]
+      },
+      avoidant:{
+        icon:"🌙",name:"Avoidant Attachment · ผูกพันแบบหลีกเลี่ยง",jp:"回避型アタッチメント",
+        desc:"เธอมีแนวโน้มรักษาระยะห่างทางอารมณ์ในความสัมพันธ์ รู้สึกสบายใจกับการพึ่งพาตัวเอง และอาจรู้สึกอึดอัดเมื่อคนอื่นต้องการความใกล้ชิดมากเกินไป สิ่งนี้อาจทำให้คนที่รักรู้สึกว่าเธออยู่ห่างๆ",
+        scores:[{label:"การรักษาระยะห่าง",val:72},{label:"การพึ่งพาตัวเอง",val:80},{label:"ความอึดอัดกับความใกล้ชิด",val:68}],
+        scoreColors:["#8b7bb5","#8b7bb5","#8b7bb5"],
+        points:["เธอมักรู้สึกว่าการพึ่งพาตัวเองปลอดภัยกว่า","เธออาจไม่ค่อยรู้ว่าตัวเองต้องการอะไรจากความสัมพันธ์","เธอมีความแข็งแกร่งในตัวเองสูง แต่บางทีก็โดดเดี่ยวโดยไม่จำเป็น"],
+        next:["ลองฝึกบอกความรู้สึกเล็กๆ น้อยๆ กับคนที่ไว้ใจได้ก่อน","ตั้งคำถามกับตัวเองว่า 'ฉันต้องการอะไรจริงๆ ในความสัมพันธ์นี้'","ศึกษา Window of Tolerance เพื่อเข้าใจขีดจำกัดทางอารมณ์"]
+      },
+      disorganized:{
+        icon:"🌸",name:"Disorganized Attachment · ผูกพันแบบสับสน",jp:"混乱型アタッチメント",
+        desc:"เธอมีทั้งความต้องการความใกล้ชิดและความกลัวความใกล้ชิดในเวลาเดียวกัน อาจรู้สึกว่าความสัมพันธ์ทั้งให้ความปลอดภัยและเป็นอันตราย สิ่งนี้มักเกิดจากประสบการณ์ที่ยากในอดีต และสามารถเยียวยาได้",
+        scores:[{label:"ความขัดแย้งภายใน",val:75},{label:"ความต้องการความปลอดภัย",val:80},{label:"ความกลัวความสัมพันธ์",val:70}],
+        scoreColors:["#c47a5a","#7a9e7e","#c47a5a"],
+        points:["เธออาจรู้สึกสับสนในความสัมพันธ์บ่อยๆ","เธอต้องการความปลอดภัยแต่ก็กลัวมันในเวลาเดียวกัน","ประสบการณ์นี้บอกว่าเธอผ่านบางอย่างที่หนักมาในอดีต"],
+        next:["การพูดคุยกับนักจิตวิทยาหรือที่ปรึกษาจะช่วยได้มากในกรณีนี้","ฝึก Grounding Techniques เมื่อรู้สึกสับสนหรือ overwhelmed","ให้เวลาตัวเองในการเยียวยา — ไม่มีกำหนดเวลา"]
+      }
+    }
+  },
+  inner: {
+    name: "Inner Child",
+    title: "เด็กน้อยในตัวเธอ",
+    source: "อ้างอิง: Young Schema Questionnaire (YSQ), Young, Klosko & Weishaar (2003), Schema Therapy: A Practitioner's Guide",
+    questions: [
+      { text: "ฉันรู้สึกว่าตัวเองไม่เป็นที่รักหรือไม่เป็นที่ต้องการ", source: "Emotional Deprivation Schema" },
+      { text: "ฉันกลัวว่าคนสำคัญในชีวิตจะทิ้งฉันไปในที่สุด", source: "Abandonment Schema" },
+      { text: "ฉันรู้สึกว่าตัวเองมีข้อบกพร่องหรือด้อยกว่าคนอื่น", source: "Defectiveness Schema" },
+      { text: "ฉันไม่เชื่อว่าคนอื่นจะดูแลฉันได้จริงๆ", source: "Mistrust/Abuse Schema" },
+      { text: "ฉันรู้สึกโดดเดี่ยวและแตกต่างจากคนอื่น", source: "Social Isolation Schema" },
+      { text: "ฉันรู้สึกผิดเมื่อทำสิ่งที่ตัวเองอยากทำโดยไม่ได้คำนึงถึงคนอื่น", source: "Subjugation Schema" },
+      { text: "ฉันมักรู้สึกว่าต้องทำงานหนักกว่าคนอื่นเพื่อให้ได้รับการยอมรับ", source: "Unrelenting Standards Schema" },
+      { text: "ฉันยากที่จะบอกว่าตัวเองต้องการอะไรกับคนอื่น", source: "Subjugation Schema" },
+      { text: "ฉันรู้สึกว่าตัวเองสมควรได้รับสิ่งที่ดีกว่านี้แต่ก็ไม่กล้าเรียกร้อง", source: "Emotional Deprivation Schema" },
+      { text: "ฉันรู้สึกว่าต้องควบคุมอารมณ์ตัวเองไว้เสมอ ห้ามโกรธหรือเศร้า", source: "Emotional Inhibition Schema" },
+      { text: "ฉันมักทำสิ่งต่างๆ เพื่อให้ได้รับความรักมากกว่าทำเพราะอยากทำ", source: "Approval-Seeking Schema" },
+      { text: "ฉันรู้สึกว่าชีวิตต้องสมบูรณ์แบบ ข้อผิดพลาดไม่เป็นที่ยอมรับ", source: "Unrelenting Standards Schema" },
+      { text: "ฉันรู้สึกยากที่จะไว้ใจคนอื่นอย่างแท้จริง", source: "Mistrust/Abuse Schema" },
+      { text: "ฉันมักเอาความต้องการของคนอื่นมาก่อนความต้องการของตัวเอง", source: "Self-Sacrifice Schema" },
+      { text: "ฉันรู้สึกว่าตัวเองต้องพิสูจน์คุณค่าของตัวเองอยู่เสมอ", source: "Defectiveness Schema" },
+    ],
+    options: [
+      {text:"ไม่เลย",val:1},{text:"นานๆ ครั้ง",val:2},{text:"บางครั้ง",val:3},{text:"บ่อยครั้ง",val:4},{text:"ใช่มากๆ",val:5}
+    ],
+    getResult: (answers) => {
+      const avg = answers.reduce((s,v)=>s+v,0)/answers.length;
+      if(avg < 2.5) return "nurtured";
+      if(avg < 3.5) return "growing";
+      return "wounded";
+    },
+    results: {
+      nurtured:{
+        icon:"🌸",name:"Nurtured Inner Child · เด็กน้อยที่ได้รับการดูแล",jp:"大切にされた子",
+        desc:"เด็กน้อยในตัวเธอดูเหมือนได้รับการดูแลและรู้สึกปลอดภัยค่อนข้างมาก เธอมีรากฐานทางอารมณ์ที่มั่นคงพอสมควร และสามารถแสดงความรู้สึกได้โดยไม่ต้องกลัวมากนัก",
+        scores:[{label:"ความรู้สึกปลอดภัย",val:80},{label:"การยอมรับตัวเอง",val:75},{label:"ความไว้วางใจในผู้อื่น",val:72}],
+        scoreColors:["#7a9e7e","#7a9e7e","#7a9e7e"],
+        points:["เธอมีรูปแบบการดูแลตัวเองที่ดีพอสมควร","เธอสามารถแสดงความต้องการได้บ้างในสถานการณ์ที่ปลอดภัย","เธอรู้สึกว่าตัวเองมีคุณค่าในระดับที่ดี"],
+        next:["ดูแลรักษาสุขภาพจิตที่มีอยู่ด้วยการ self-reflect สม่ำเสมอ","ลองทำ Journal เพื่อเข้าใจตัวเองในระดับที่ลึกขึ้น","แบ่งปันความเข้าใจนี้กับคนที่คุณรัก"]
+      },
+      growing:{
+        icon:"🌱",name:"Growing Inner Child · เด็กน้อยที่กำลังเติบโต",jp:"成長中の子",
+        desc:"เด็กน้อยในตัวเธอมีทั้งส่วนที่ได้รับการดูแลและส่วนที่ยังต้องการความใส่ใจ เธออาจรู้สึกสับสนบางครั้งว่าต้องการอะไร หรือรู้สึกว่าตัวเองต้องพิสูจน์ตัวเองอยู่เสมอ",
+        scores:[{label:"ความต้องการการดูแล",val:65},{label:"การเติบโตทางอารมณ์",val:60},{label:"ความมั่นใจในตัวเอง",val:58}],
+        scoreColors:["#c4a882","#c4a882","#c4a882"],
+        points:["เธออาจมี schema บางอย่างที่ส่งผลต่อพฤติกรรมในปัจจุบัน","เธอมีศักยภาพในการเติบโตทางอารมณ์มาก","การรับรู้ schema ของตัวเองเป็นขั้นแรกที่สำคัญมาก"],
+        next:["ลองทำ Inner Child Journaling — เขียนจดหมายถึงตัวเองตอนเด็ก","ศึกษา Schema Therapy เบื้องต้นเพื่อเข้าใจ pattern ของตัวเอง","ฝึก Self-Compassion — พูดกับตัวเองเหมือนพูดกับเพื่อนที่รัก"]
+      },
+      wounded:{
+        icon:"🕊️",name:"Wounded Inner Child · เด็กน้อยที่ต้องการการเยียวยา",jp:"癒しを必要としている子",
+        desc:"เด็กน้อยในตัวเธอดูเหมือนมีประสบการณ์บางอย่างในอดีตที่ทิ้งรอยไว้ เธออาจรู้สึกว่าตัวเองไม่พอ หรือต้องพิสูจน์ตัวเองอยู่เสมอ สิ่งเหล่านี้สามารถเยียวยาได้ และมันต้องใช้เวลา",
+        scores:[{label:"ร่องรอยจากอดีต",val:72},{label:"ความต้องการการเยียวยา",val:78},{label:"ความแข็งแกร่งที่มีอยู่",val:65}],
+        scoreColors:["#c47a5a","#8b7bb5","#7a9e7e"],
+        points:["เธอมีบาดแผลทางอารมณ์บางอย่างที่ยังต้องการความใส่ใจ","Schema เหล่านี้พัฒนามาเพื่อปกป้องเธอในอดีต ไม่ใช่ข้อบกพร่อง","เธอมีความกล้าที่มาทำ quiz นี้ — นั่นคือก้าวแรกที่สำคัญ"],
+        next:["การพูดคุยกับนักจิตวิทยาหรือที่ปรึกษาจะช่วยได้มากในกรณีนี้","ฝึก Self-Compassion Meditation ทุกวัน — ให้ตัวเองได้รับความเมตตาจากตัวเอง","อ่านหนังสือ 'The Body Keeps the Score' หรือ 'Healing the Child Within'"]
+      }
+    }
+  },
+  emotion: {
+    name: "Emotion Regulation",
+    title: "รูปแบบการจัดการอารมณ์",
+    source: "อ้างอิง: Emotion Regulation Questionnaire (ERQ), Gross & John (2003), Journal of Personality and Social Psychology, 85(2), 348-362",
+    questions: [
+      { text: "เมื่อฉันอยากแสดงอารมณ์เชิงบวก ฉันเปลี่ยนวิธีคิดเกี่ยวกับสถานการณ์นั้น", source: "Cognitive Reappraisal" },
+      { text: "ฉันเก็บอารมณ์ไว้ในใจโดยไม่แสดงออกมาภายนอก", source: "Expressive Suppression" },
+      { text: "เมื่อฉันต้องรับมือกับสถานการณ์ยาก ฉันมองมันในแง่บวกได้", source: "Cognitive Reappraisal" },
+      { text: "เมื่อรู้สึกอารมณ์แง่ลบ ฉันไม่แสดงออกมาให้คนอื่นเห็น", source: "Expressive Suppression" },
+      { text: "ฉันสามารถเปลี่ยนมุมมองต่อสถานการณ์เพื่อรู้สึกดีขึ้นได้", source: "Cognitive Reappraisal" },
+      { text: "ฉันควบคุมไม่ให้ตัวเองแสดงความรู้สึกออกมา", source: "Expressive Suppression" },
+      { text: "เมื่อต้องการรู้สึกดีขึ้น ฉันเปลี่ยนวิธีคิดเกี่ยวกับสถานการณ์ที่เผชิญ", source: "Cognitive Reappraisal" },
+      { text: "ฉันซ่อนความรู้สึกของตัวเอง", source: "Expressive Suppression" },
+      { text: "เมื่อฉันรู้สึกแย่ ฉันคิดหาวิธีมองสถานการณ์นั้นในแง่มุมที่แตกต่าง", source: "Cognitive Reappraisal" },
+      { text: "เมื่อรู้สึกอารมณ์ดี ฉันระวังไม่ให้แสดงออกมากเกินไป", source: "Expressive Suppression" },
+      { text: "ฉันรับมือกับอารมณ์โดยการมองสถานการณ์ในมุมที่ต่างออกไป", source: "Cognitive Reappraisal" },
+      { text: "ฉันรู้สึกว่าการแสดงอารมณ์ออกมาเป็นเรื่องไม่ควร", source: "Expressive Suppression" },
+      { text: "เมื่อเจอสถานการณ์ยาก ฉันพยายามคิดบวก", source: "Cognitive Reappraisal" },
+      { text: "ฉันป้องกันไม่ให้ตัวเองแสดงอารมณ์ในที่สาธารณะ", source: "Expressive Suppression" },
+      { text: "ฉันสามารถยืดหยุ่นวิธีมองสถานการณ์เพื่อลดความเครียดได้", source: "Cognitive Reappraisal" },
+    ],
+    options: [
+      {text:"ไม่เลย",val:1},{text:"นานๆ ครั้ง",val:2},{text:"บางครั้ง",val:3},{text:"บ่อยครั้ง",val:4},{text:"ใช่มากๆ",val:5}
+    ],
+    getResult: (answers) => {
+      const reappraise = [0,2,4,6,8,10,12,14].reduce((s,i)=>s+answers[i],0)/8;
+      const suppress   = [1,3,5,7,9,11,13].reduce((s,i)=>s+answers[i],0)/7;
+      if(reappraise >= 3.5 && suppress < 3) return "reappraiser";
+      if(suppress >= 3.5 && reappraise < 3) return "suppressor";
+      if(reappraise >= 3 && suppress >= 3) return "mixed";
+      return "developing";
+    },
+    results: {
+      reappraiser:{
+        icon:"🌤️",name:"Cognitive Reappraiser · นักเปลี่ยนมุมมอง",jp:"認知的再評価型",
+        desc:"เธอมีแนวโน้มจัดการอารมณ์ด้วยการเปลี่ยนวิธีคิดและมุมมองต่อสถานการณ์ งานวิจัยพบว่า Cognitive Reappraisal สัมพันธ์กับสุขภาพจิตที่ดีกว่า ความสัมพันธ์ที่ดีกว่า และความเป็นอยู่ที่ดีโดยรวม",
+        scores:[{label:"Cognitive Reappraisal",val:82},{label:"Emotional Flexibility",val:75},{label:"Well-being",val:78}],
+        scoreColors:["#7a9e7e","#7a9e7e","#7a9e7e"],
+        points:["เธอสามารถมองสถานการณ์ยากในมุมที่ต่างออกไปได้","เธอมีแนวโน้มรู้สึกอารมณ์เชิงบวกมากกว่าและอารมณ์เชิงลบน้อยกว่า","เธอมักมีความสัมพันธ์ที่ดีกับคนรอบข้าง เพราะแสดงอารมณ์ได้สมดุล"],
+        next:["ฝึก Reappraisal ต่อไปในสถานการณ์ที่ยากขึ้น","แบ่งปันทักษะนี้กับคนที่คุณรัก","ระวังไม่ให้ Reappraisal กลายเป็นการปฏิเสธความรู้สึกจริงๆ"]
+      },
+      suppressor:{
+        icon:"🌊",name:"Expressive Suppressor · ผู้เก็บกดอารมณ์",jp:"表情抑制型",
+        desc:"เธอมีแนวโน้มควบคุมการแสดงอารมณ์ออกมาภายนอก งานวิจัยของ Gross & John พบว่า Suppression สัมพันธ์กับสุขภาพจิตที่ต่ำกว่า ความสัมพันธ์ที่ยากกว่า และความเครียดสะสมมากกว่า แต่สิ่งนี้สามารถเปลี่ยนแปลงได้",
+        scores:[{label:"Expressive Suppression",val:75},{label:"ความเครียดสะสม",val:70},{label:"ความต้องการเรียนรู้ Reappraisal",val:80}],
+        scoreColors:["#c4a882","#c47a5a","#7a9e7e"],
+        points:["เธออาจรู้สึกเหนื่อยจากการต้องควบคุมอารมณ์ตลอดเวลา","คนรอบข้างอาจรู้สึกว่าเธออ่านยาก เพราะไม่แสดงอารมณ์มาก","เธอมีแนวโน้มประมวลผลอารมณ์ภายในมากกว่าภายนอก"],
+        next:["ฝึก Cognitive Reappraisal — ลองมองสถานการณ์ยากในมุมอื่น","เริ่มบอกความรู้สึกเล็กๆ กับคนที่ไว้ใจได้ก่อน","Journal ทุกวันเพื่อประมวลผลอารมณ์ที่เก็บไว้"]
+      },
+      mixed:{
+        icon:"⚖️",name:"Mixed Regulator · ผู้ใช้ทั้งสองแบบ",jp:"混合型感情調整",
+        desc:"เธอใช้ทั้ง Cognitive Reappraisal และ Expressive Suppression ขึ้นอยู่กับสถานการณ์ ซึ่งอาจดีในบางกรณี แต่ก็อาจทำให้สับสนว่าจริงๆ แล้วรู้สึกอะไร",
+        scores:[{label:"Reappraisal",val:65},{label:"Suppression",val:63},{label:"Emotional Awareness",val:60}],
+        scoreColors:["#7a9e7e","#c4a882","#8b7bb5"],
+        points:["เธอยืดหยุ่นในการจัดการอารมณ์","เธออาจรู้สึกสับสนบางครั้งว่าตัวเองรู้สึกอะไรกันแน่","การพัฒนา Emotional Awareness จะช่วยได้มาก"],
+        next:["ฝึก Mindfulness เพื่อเพิ่ม Emotional Awareness","ลองสังเกตว่าตัวเองใช้ Suppression มากในสถานการณ์ไหน","เพิ่ม Reappraisal ในสถานการณ์ที่มักใช้ Suppression"]
+      },
+      developing:{
+        icon:"🌱",name:"Developing Regulator · กำลังพัฒนา",jp:"発展中の感情調整",
+        desc:"เธออยู่ในช่วงที่กำลังพัฒนาทักษะการจัดการอารมณ์ ซึ่งไม่ใช่เรื่องแย่เลย ทักษะนี้เรียนรู้ได้เสมอ ไม่ว่าจะอายุเท่าไหร่",
+        scores:[{label:"ความสามารถ Reappraisal",val:55},{label:"การควบคุมอารมณ์",val:50},{label:"ศักยภาพในการพัฒนา",val:85}],
+        scoreColors:["#c4a882","#c4a882","#7a9e7e"],
+        points:["เธอยังอยู่ในช่วงเรียนรู้วิธีรับมือกับอารมณ์ที่ยาก","เธอมีศักยภาพในการพัฒนาได้มาก","การรับรู้ตรงนี้คือก้าวแรกที่สำคัญที่สุด"],
+        next:["เริ่มฝึก Deep Breathing เมื่อรู้สึกอารมณ์รุนแรง","ลอง Journal ทุกวัน เขียนว่ารู้สึกอะไร และทำอะไรกับมัน","ศึกษา DBT Skills — โดยเฉพาะ Emotion Regulation Module"]
+      }
+    }
+  }
+};
+
+let currentQuiz = null;
+let currentQ = 0;
+let answers = [];
+
+function startQuiz(type) {
+  currentQuiz = QUIZZES[type];
+  currentQ = 0;
+  answers = new Array(currentQuiz.questions.length).fill(0);
+  showScreen('screenQuiz');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = currentQuiz.questions[currentQ];
+  const total = currentQuiz.questions.length;
+  const pct = Math.round((currentQ/total)*100);
+
+  document.getElementById('progressLabel').textContent = `ข้อ ${currentQ+1} จาก ${total}`;
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('questionNum').textContent = `ข้อที่ ${currentQ+1}`;
+  document.getElementById('questionText').textContent = q.text;
+  document.getElementById('questionSource').textContent = `(${q.source})`;
+
+  const wrap = document.getElementById('optionsWrap');
+  wrap.innerHTML = '';
+  currentQuiz.options.forEach((opt,i) => {
+    const div = document.createElement('div');
+    div.className = 'option' + (answers[currentQ]===opt.val ? ' selected' : '');
+    div.innerHTML = `<div class="option-dot"></div><div class="option-text">${opt.text}</div>`;
+    div.onclick = () => selectOption(opt.val);
+    wrap.appendChild(div);
+  });
+
+  document.getElementById('btnPrev').style.visibility = currentQ===0?'hidden':'visible';
+  document.getElementById('btnNext').disabled = answers[currentQ]===0;
+  document.getElementById('btnNext').textContent = currentQ===currentQuiz.questions.length-1 ? 'ดูผลลัพธ์ 🌿' : 'ถัดไป →';
+}
+
+function selectOption(val) {
+  answers[currentQ] = val;
+  document.querySelectorAll('.option').forEach(el=>el.classList.remove('selected'));
+  const opts = document.querySelectorAll('.option');
+  const idx = currentQuiz.options.findIndex(o=>o.val===val);
+  if(opts[idx]) opts[idx].classList.add('selected');
+  document.getElementById('btnNext').disabled = false;
+}
+
+function nextQ() {
+  if(answers[currentQ]===0) return;
+  if(currentQ < currentQuiz.questions.length-1) {
+    currentQ++;
+    renderQuestion();
+    window.scrollTo({top:0,behavior:'smooth'});
+  } else {
+    showResult();
+  }
+}
+
+function prevQ() {
+  if(currentQ>0){ currentQ--; renderQuestion(); window.scrollTo({top:0,behavior:'smooth'}); }
+}
+
+function showResult() {
+  const key = currentQuiz.getResult(answers);
+  const r = currentQuiz.results[key];
+  const scoreBarHTML = r.scores.map((s,i)=>`
+    <div class="score-bar-item">
+      <div class="score-bar-label"><span>${s.label}</span><span>${s.val}%</span></div>
+      <div class="score-bar-track"><div class="score-bar-fill" style="width:0%;background:${r.scoreColors[i]}" data-width="${s.val}"></div></div>
+    </div>`).join('');
+  const pointsHTML = r.points.map(p=>`<div class="result-point"><span class="result-point-icon">✦</span><span>${p}</span></div>`).join('');
+  const nextHTML = r.next.map(n=>`<div class="next-step-item"><span class="next-step-icon">🌿</span><span>${n}</span></div>`).join('');
+
+  document.getElementById('resultContent').innerHTML = `
+    <div class="result-header">
+      <div class="result-label">✦ ผลลัพธ์ · ${currentQuiz.name}</div>
+      <h1 class="result-name">${r.name}</h1>
+      <span class="result-jp">${r.jp}</span>
+    </div>
+    <div class="result-card">
+      <span class="result-card-icon">${r.icon}</span>
+      <h2 class="result-card-title">${r.name.split('·')[1]?.trim()||r.name}</h2>
+      <p class="result-card-desc">${r.desc}</p>
+      <div class="score-bars">${scoreBarHTML}</div>
+    </div>
+    <div class="result-card">
+      <div class="result-section">
+        <div class="result-section-title">สิ่งที่ผลนี้บอกเกี่ยวกับเธอ</div>
+        <div class="result-points">${pointsHTML}</div>
+      </div>
+    </div>
+    <div class="next-steps">
+      <div class="next-steps-title">ลองทำสิ่งเหล่านี้ต่อ</div>
+      ${nextHTML}
+    </div>
+    <div class="result-source">📚 ${currentQuiz.source}</div>
+    <div class="feedback-section">
+      <div class="feedback-title">ผลลัพธ์นี้ตรงกับเธอไหม?</div>
+      <div class="feedback-desc">feedback ของเธอช่วยให้เราพัฒนา quiz ให้ดีขึ้นได้นะ 🌿</div>
+      <div class="feedback-btns">
+        <button class="feedback-btn yes" onclick="sendFeedback('yes',this)">✓ ตรงมาก</button>
+        <button class="feedback-btn partial" onclick="sendFeedback('partial',this)">~ ตรงบางส่วน</button>
+        <button class="feedback-btn no" onclick="sendFeedback('no',this)">✕ ไม่ค่อยตรง</button>
+      </div>
+      <div class="feedback-thanks" id="feedbackThanks">ขอบคุณนะ 🌸 จะนำไปปรับปรุงต่อ</div>
+    </div>
+    <div class="result-actions">
+      <button class="btn-retake" onclick="startQuiz('${Object.keys(QUIZZES).find(k=>QUIZZES[k]===currentQuiz)}')">ทำอีกครั้ง</button>
+      <button class="btn-other" onclick="showScreen('screenSelect')">ลอง Quiz อื่น 🌿</button>
+    </div>
+  `;
+  showScreen('screenResult');
+  setTimeout(()=>{
+    document.querySelectorAll('.score-bar-fill').forEach(el=>{
+      el.style.width=el.dataset.width+'%';
+    });
+  },300);
+}
+
+function sendFeedback(type, btn) {
+  document.querySelectorAll('.feedback-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('feedbackThanks').classList.add('show');
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>

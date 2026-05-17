@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="description" content="Journal, Worksheet และ Guide สำหรับการสำรวจตัวเองและการเยียวยา ดาวน์โหลดแล้วใช้ได้เลย"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Tanjainoto · Digital Products</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Sarabun:wght@300;400;500;600&family=Noto+Serif+JP:wght@300;400&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --sage:#7a9e7e;--sage-lt:#a8c5a0;--sage-pale:#ddeadb;--sage-mist:#eef5ec;
+      --cream:#f5f0e8;--ivory:#faf7f2;
+      --earth:#8b6f47;--earth-dk:#4a3728;--earth-md:#c4a882;
+      --text:#3d3228;--text-s:#6b5a4a;--text-xs:#9c8878;
+      --journal:#7a9e7e;--worksheet:#8b7bb5;--guide:#c47a5a;--letter:#5a8fa8;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;} html{scroll-behavior:smooth;}
+    body{font-family:'Sarabun',sans-serif;background:var(--ivory);color:var(--text);overflow-x:hidden;}
+
+    /* NAV */
+    nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;background:rgba(250,247,242,0.93);backdrop-filter:blur(14px);border-bottom:1px solid rgba(196,168,130,0.18);}
+    .logo{font-family:'Playfair Display',serif;font-style:italic;font-size:1.3rem;color:var(--earth-dk);text-decoration:none;line-height:1;}
+    .logo-jp{font-family:'Noto Serif JP',serif;font-size:.55rem;color:var(--text-xs);letter-spacing:.06em;display:block;font-style:normal;margin-top:2px;}
+    .nav-links{display:flex;gap:1.8rem;list-style:none;}
+    .nav-links a{text-decoration:none;color:var(--text-s);font-size:.86rem;letter-spacing:.04em;transition:color .2s;}
+    .nav-links a:hover{color:var(--sage);}
+    .nav-links a.active{color:var(--sage);font-weight:600;}
+    .nav-pill{background:var(--earth-dk);color:var(--cream)!important;padding:.4rem 1.1rem;border-radius:999px;}
+    @media(max-width:768px){.nav-links{display:none;}}
+
+    /* PAGE HEADER */
+    .page-header{
+      padding:8rem 2rem 3.5rem;
+      background:linear-gradient(160deg,var(--cream) 0%,var(--sage-mist) 50%,var(--ivory) 100%);
+      position:relative;overflow:hidden;
+    }
+    .ph-blob{position:absolute;border-radius:60% 40% 70% 30%/50% 65% 35% 50%;pointer-events:none;animation:morph 18s ease-in-out infinite;}
+    .ph-blob-1{width:350px;height:350px;background:var(--sage-pale);top:-80px;right:-60px;opacity:.5;}
+    .ph-blob-2{width:200px;height:200px;background:var(--earth-md);bottom:-50px;left:3%;opacity:.12;animation-direction:reverse;}
+    @keyframes morph{0%,100%{border-radius:60% 40% 70% 30%/50% 65% 35% 50%}33%{border-radius:35% 65% 45% 55%/65% 35% 65% 35%}66%{border-radius:50% 50% 35% 65%/40% 60% 40% 60%}}
+    .ph-inner{max-width:1080px;margin:0 auto;position:relative;z-index:2;}
+    .ph-label{font-size:.7rem;letter-spacing:.18em;font-weight:700;text-transform:uppercase;color:var(--sage);margin-bottom:.6rem;}
+    .ph-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,2.8rem);color:var(--earth-dk);line-height:1.2;margin-bottom:.4rem;}
+    .ph-title em{font-style:italic;color:var(--sage);}
+    .ph-jp{font-family:'Noto Serif JP',serif;font-size:.75rem;color:var(--text-xs);letter-spacing:.1em;display:block;margin-bottom:.8rem;}
+    .ph-desc{font-size:.95rem;color:var(--text-s);font-weight:300;line-height:1.85;max-width:500px;}
+
+    /* FILTER */
+    .filter-wrap{background:var(--ivory);border-bottom:1px solid rgba(196,168,130,0.15);position:sticky;top:62px;z-index:100;padding:.8rem 2rem;}
+    .filter-inner{max-width:1080px;margin:0 auto;display:flex;gap:.55rem;flex-wrap:wrap;align-items:center;}
+    .filter-label{font-size:.68rem;letter-spacing:.1em;font-weight:700;color:var(--text-xs);text-transform:uppercase;margin-right:.3rem;flex-shrink:0;}
+    .filter-btn{padding:.32rem .9rem;border-radius:999px;font-size:.8rem;font-weight:500;border:1.5px solid rgba(196,168,130,.28);background:transparent;color:var(--text-s);cursor:pointer;transition:all .18s;font-family:'Sarabun',sans-serif;}
+    .filter-btn:hover{border-color:var(--sage);color:var(--sage);}
+    .filter-btn.active{background:var(--earth-dk);color:var(--cream);border-color:var(--earth-dk);}
+    .filter-btn[data-cat="journal"].active{background:var(--journal);border-color:var(--journal);}
+    .filter-btn[data-cat="worksheet"].active{background:var(--worksheet);border-color:var(--worksheet);}
+    .filter-btn[data-cat="guide"].active{background:var(--guide);border-color:var(--guide);}
+    .filter-btn[data-cat="letter"].active{background:var(--letter);border-color:var(--letter);}
+
+    /* GRID */
+    .shop-wrap{max-width:1080px;margin:0 auto;padding:3rem 2rem 6rem;}
+    .shop-count{font-size:.78rem;color:var(--text-xs);margin-bottom:1.8rem;}
+    .shop-count span{color:var(--sage);font-weight:600;}
+    .shop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem;}
+
+    /* PRODUCT CARD */
+    .product{
+      background:var(--cream);border-radius:24px;overflow:hidden;
+      border:1px solid rgba(196,168,130,.15);
+      cursor:pointer;transition:transform .25s,box-shadow .25s;
+      display:flex;flex-direction:column;
+    }
+    .product:hover{transform:translateY(-6px);box-shadow:0 18px 48px rgba(74,55,40,.12);}
+    .product.hidden{display:none;}
+
+    /* product visual — CSS only, no image */
+    .product-visual{
+      height:160px;display:flex;align-items:center;justify-content:center;
+      position:relative;overflow:hidden;flex-shrink:0;
+    }
+    .product[data-cat="journal"] .product-visual{background:linear-gradient(135deg,#ddeadb,#c8dfc9);}
+    .product[data-cat="worksheet"] .product-visual{background:linear-gradient(135deg,#ede8f4,#ddd5ee);}
+    .product[data-cat="guide"] .product-visual{background:linear-gradient(135deg,#f0e6d8,#e8d5c0);}
+    .product[data-cat="letter"] .product-visual{background:linear-gradient(135deg,#dce8f0,#c8dcea);}
+
+    /* watercolor splash */
+    .product-visual::before{
+      content:'';position:absolute;
+      width:180px;height:180px;border-radius:50%;
+      background:radial-gradient(circle,rgba(255,255,255,.5) 0%,transparent 65%);
+      top:-40px;left:-40px;
+    }
+    .product-visual::after{
+      content:'';position:absolute;
+      width:120px;height:120px;border-radius:50%;
+      background:radial-gradient(circle,rgba(255,255,255,.3) 0%,transparent 65%);
+      bottom:-20px;right:-20px;
+    }
+
+    /* mock product illustration */
+    .product-mockup{
+      position:relative;z-index:1;
+      width:80px;height:100px;
+      border-radius:8px 12px 12px 8px;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      box-shadow:4px 4px 16px rgba(74,55,40,.18),0 0 0 1px rgba(255,255,255,.4);
+      font-size:2rem;
+    }
+    .product[data-cat="journal"] .product-mockup{background:var(--ivory);}
+    .product[data-cat="worksheet"] .product-mockup{background:#f8f5ff;}
+    .product[data-cat="guide"] .product-mockup{background:#fff8f4;}
+    .product[data-cat="letter"] .product-mockup{background:#f3f8fc;}
+
+    /* spine */
+    .product-mockup::before{
+      content:'';position:absolute;left:0;top:0;bottom:0;width:6px;border-radius:8px 0 0 8px;
+    }
+    .product[data-cat="journal"] .product-mockup::before{background:var(--journal);}
+    .product[data-cat="worksheet"] .product-mockup::before{background:var(--worksheet);}
+    .product[data-cat="guide"] .product-mockup::before{background:var(--guide);}
+    .product[data-cat="letter"] .product-mockup::before{background:var(--letter);}
+
+    .product-body{padding:1.3rem;flex:1;display:flex;flex-direction:column;}
+    .product-cat{
+      display:inline-flex;align-items:center;gap:.35rem;
+      font-size:.65rem;letter-spacing:.1em;font-weight:700;text-transform:uppercase;
+      margin-bottom:.6rem;
+    }
+    .product[data-cat="journal"] .product-cat{color:var(--journal);}
+    .product[data-cat="worksheet"] .product-cat{color:var(--worksheet);}
+    .product[data-cat="guide"] .product-cat{color:var(--guide);}
+    .product[data-cat="letter"] .product-cat{color:var(--letter);}
+    .cat-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0;}
+
+    .product-name{font-family:'Playfair Display',serif;font-size:1rem;color:var(--earth-dk);line-height:1.4;margin-bottom:.4rem;}
+    .product-desc{font-size:.8rem;color:var(--text-s);line-height:1.7;font-weight:300;flex:1;}
+    .product-includes{margin:.8rem 0;display:flex;flex-direction:column;gap:.25rem;}
+    .product-include-item{font-size:.75rem;color:var(--text-xs);display:flex;align-items:center;gap:.4rem;}
+    .product-include-item::before{content:'✦';font-size:.55rem;color:var(--sage);}
+
+    .product-footer{display:flex;align-items:center;justify-content:space-between;margin-top:1rem;padding-top:.9rem;border-top:1px solid rgba(196,168,130,.15);}
+    .product-price{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--earth-dk);font-weight:600;}
+    .product-price span{font-size:.75rem;font-weight:300;color:var(--text-xs);font-family:'Sarabun',sans-serif;}
+    .btn-buy{
+      background:var(--earth-dk);color:var(--cream);
+      padding:.42rem 1.1rem;border-radius:999px;
+      font-size:.8rem;font-weight:600;border:none;cursor:pointer;
+      transition:all .2s;font-family:'Sarabun',sans-serif;
+    }
+    .btn-buy:hover{background:var(--sage);transform:translateY(-1px);}
+
+    /* FEATURED product */
+    .product.featured{grid-column:1/-1;flex-direction:row;}
+    .product.featured .product-visual{width:280px;height:auto;flex-shrink:0;border-radius:0;}
+    .product.featured .product-body{padding:2rem;}
+    .product.featured .product-name{font-size:1.3rem;}
+    .product.featured .product-desc{font-size:.88rem;}
+
+    /* PAYMENT MODAL */
+    .modal-overlay{
+      position:fixed;inset:0;z-index:500;
+      background:rgba(30,16,40,.7);backdrop-filter:blur(8px);
+      display:none;align-items:center;justify-content:center;padding:1.5rem;
+    }
+    .modal-overlay.open{display:flex;}
+    .modal{
+      background:var(--ivory);border-radius:28px;
+      max-width:440px;width:100%;padding:2.2rem;
+      position:relative;box-shadow:0 24px 80px rgba(74,55,40,.2);
+    }
+    .modal-close{
+      position:absolute;top:1rem;right:1.2rem;
+      background:transparent;border:none;cursor:pointer;
+      font-size:1.2rem;color:var(--text-xs);transition:color .2s;
+    }
+    .modal-close:hover{color:var(--text);}
+    .modal-label{font-size:.68rem;letter-spacing:.14em;font-weight:700;text-transform:uppercase;color:var(--sage);margin-bottom:.4rem;}
+    .modal-product-name{font-family:'Playfair Display',serif;font-size:1.3rem;font-style:italic;color:var(--earth-dk);margin-bottom:.3rem;}
+    .modal-price{font-size:1.5rem;font-weight:700;color:var(--earth-dk);margin-bottom:1.5rem;}
+    .modal-price span{font-size:.85rem;font-weight:300;color:var(--text-xs);}
+
+    .pay-methods{display:flex;flex-direction:column;gap:.8rem;margin-bottom:1.5rem;}
+    .pay-btn{
+      display:flex;align-items:center;gap:1rem;
+      padding:1rem 1.2rem;border-radius:16px;
+      border:1.5px solid rgba(196,168,130,.25);background:var(--cream);
+      cursor:pointer;transition:all .2s;text-align:left;
+      font-family:'Sarabun',sans-serif;width:100%;
+    }
+    .pay-btn:hover{border-color:var(--sage);background:var(--sage-pale);}
+    .pay-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+    .pay-icon.line{background:#06c755;}
+    .pay-icon.prompt{background:#1a56db;}
+    .pay-text-name{font-size:.92rem;font-weight:600;color:var(--earth-dk);}
+    .pay-text-sub{font-size:.75rem;color:var(--text-xs);}
+
+    .modal-note{
+      font-size:.75rem;color:var(--text-xs);line-height:1.7;
+      background:var(--sage-pale);border-radius:12px;padding:.8rem 1rem;
+    }
+    .modal-note strong{color:var(--sage);font-weight:600;}
+
+    /* EMPTY */
+    .empty-state{grid-column:1/-1;text-align:center;padding:4rem 2rem;display:none;}
+    .empty-state.show{display:block;}
+    .empty-emoji{font-size:2.5rem;display:block;margin-bottom:.8rem;}
+    .empty-text{font-family:'Playfair Display',serif;font-style:italic;font-size:1rem;color:var(--text-xs);}
+
+    @media(max-width:900px){
+      .shop-grid{grid-template-columns:repeat(2,1fr);}
+      .product.featured{flex-direction:column;grid-column:auto;}
+      .product.featured .product-visual{width:100%;height:160px;}
+    }
+    @media(max-width:560px){.shop-grid{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">tanjainoto<span class="logo-jp">心の中のノート</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">หน้าแรก</a></li>
+    <li><a href="banthuk.html">บันทึก</a></li>
+    <li><a href="stories.html">Stories</a></li>
+    <li><a href="quiz.html">Quiz</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="quiz.html" class="nav-pill">ทำ Quiz 🌸</a></li>
+  </ul>
+</nav>
+
+<!-- HEADER -->
+<div class="page-header">
+  <div class="ph-blob ph-blob-1"></div>
+  <div class="ph-blob ph-blob-2"></div>
+  <div class="ph-inner">
+    <p class="ph-label">✦ Digital Products</p>
+    <h1 class="ph-title">เครื่องมือเล็กๆ<br/><em>สำหรับการเดินทาง</em></h1>
+    <span class="ph-jp">旅のための小さな道具たち</span>
+    <p class="ph-desc">ดาวน์โหลดแล้วใช้ได้เลย ออกแบบมาสำหรับคนที่อยากเข้าใจตัวเองมากขึ้น ทีละนิด</p>
+  </div>
+</div>
+
+<!-- FILTER -->
+<div class="filter-wrap">
+  <div class="filter-inner">
+    <span class="filter-label">หมวด</span>
+    <button class="filter-btn active" data-cat="all">✦ ทั้งหมด</button>
+    <button class="filter-btn" data-cat="journal">📓 Journal</button>
+    <button class="filter-btn" data-cat="worksheet">🪞 Worksheet</button>
+    <button class="filter-btn" data-cat="guide">🌱 Guide</button>
+    <button class="filter-btn" data-cat="letter">💌 Letter</button>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<div class="shop-wrap">
+  <p class="shop-count">สินค้าทั้งหมด <span id="count">6</span> รายการ</p>
+
+  <div class="shop-grid" id="grid">
+
+    <!-- FEATURED -->
+    <div class="product featured" data-cat="journal">
+      <div class="product-visual">
+        <div class="product-mockup">📓</div>
+      </div>
+      <div class="product-body">
+        <div class="product-cat"><span class="cat-dot"></span>Journal</div>
+        <h2 class="product-name">Healing Journal · 30 วัน</h2>
+        <p class="product-desc">เทมเพลตวารสารรายวัน 30 หน้า ออกแบบมาเพื่อช่วยให้เธอสำรวจความรู้สึกของตัวเองอย่างสม่ำเสมอ ไม่ต้องรู้ว่าจะเขียนอะไร เพราะทุกหน้ามี prompt ชวนคิดไว้ให้แล้ว</p>
+        <div class="product-includes">
+          <div class="product-include-item">เทมเพลต 30 หน้า · ไฟล์ PDF</div>
+          <div class="product-include-item">Daily prompt ทุกวัน</div>
+          <div class="product-include-item">Mood tracker + Weekly reflection</div>
+          <div class="product-include-item">พิมพ์ได้ / ใช้บน iPad ได้เลย</div>
+        </div>
+        <div class="product-footer">
+          <div class="product-price">฿89 <span>/ ดาวน์โหลดทันที</span></div>
+          <button class="btn-buy" onclick="openModal('Healing Journal · 30 วัน','89')">ซื้อเลย</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- WORKSHEET -->
+    <div class="product" data-cat="worksheet">
+      <div class="product-visual"><div class="product-mockup">🪞</div></div>
+      <div class="product-body">
+        <div class="product-cat"><span class="cat-dot"></span>Worksheet</div>
+        <h3 class="product-name">Shadow Work Worksheet</h3>
+        <p class="product-desc">สำรวจด้านที่เราซ่อนไว้ลึกที่สุด พร้อม prompt ชวนคิดแบบ gentle — ไม่ตัดสิน ไม่เร่ง</p>
+        <div class="product-includes">
+          <div class="product-include-item">8 worksheet · ไฟล์ PDF</div>
+          <div class="product-include-item">คำแนะนำวิธีใช้</div>
+        </div>
+        <div class="product-footer">
+          <div class="product-price">฿119 <span>/ ดาวน์โหลด</span></div>
+          <button class="btn-buy" onclick="openModal('Shadow Work Worksheet','119')">ซื้อเลย</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GUIDE -->
+    <div class="product" data-cat="guide">
+      <div class="product-visual"><div class="product-mockup">🌱</div></div>
+      <div class="product-body">
+        <div class="product-cat"><span class="cat-dot"></span>Guide</div>
+        <h3 class="product-name">Inner Child Guide Book</h3>
+        <p class="product-desc">คู่มือทำความรู้จักเด็กน้อยในตัว พร้อม activity ทีละขั้น อ่านง่าย ไม่ต้องมีพื้นฐานจิตวิทยา</p>
+        <div class="product-includes">
+          <div class="product-include-item">24 หน้า · ไฟล์ PDF</div>
+          <div class="product-include-item">Activity + Reflection</div>
+        </div>
+        <div class="product-footer">
+          <div class="product-price">฿149 <span>/ ดาวน์โหลด</span></div>
+          <button class="btn-buy" onclick="openModal('Inner Child Guide Book','149')">ซื้อเลย</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LETTER -->
+    <div class="product" data-cat="letter">
+      <div class="product-visual"><div class="product-mockup">💌</div></div>
+      <div class="product-body">
+        <div class="product-cat"><span class="cat-dot"></span>Letter</div>
+        <h3 class="product-name">Letters to Myself</h3>
+        <p class="product-desc">เทมเพลตเขียนจดหมายถึงตัวเอง — อดีต ปัจจุบัน และอนาคต เพราะบางคำพูดเราต้องการได้ยินจากตัวเองมากที่สุด</p>
+        <div class="product-includes">
+          <div class="product-include-item">3 template · ไฟล์ PDF</div>
+          <div class="product-include-item">Guided prompts ทุกฉบับ</div>
+        </div>
+        <div class="product-footer">
+          <div class="product-price">฿79 <span>/ ดาวน์โหลด</span></div>
+          <button class="btn-buy" onclick="openModal('Letters to Myself','79')">ซื้อเลย</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- WORKSHEET 2 -->
+    <div class="product" data-cat="worksheet">
+      <div class="product-visual"><div class="product-mockup">🌙</div></div>
+      <div class="product-body">
+        <div class="product-cat"><span class="cat-dot"></span>Worksheet</div>
+        <h3 class="product-name">Attachment Style Worksheet</h3>
+        <p class="product-desc">สำรวจรูปแบบความผูกพันของตัวเอง และเข้าใจว่ามันส่งผลต่อความสัมพันธ์ยังไง</p>
+        <div class="product-includes">
+          <div class="product-include-item">6 worksheet · ไฟล์ PDF</div>
+          <div class="product-include-item">ตารางวิเคราะห์ตัวเอง</div>
+        </div>
+        <div class="product-footer">
+          <div class="product-price">฿99 <span>/ ดาวน์โหลด</span></div>
+          <button class="btn-buy" onclick="openModal('Attachment Style Worksheet','99')">ซื้อเลย</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- JOURNAL 2 -->
+    <div class="product" data-cat="journal">
+      <div class="product-visual"><div class="product-mockup">🌸</div></div>
+      <div class="product-body">
+        <div class="product-cat"><span class="cat-dot"></span>Journal</div>
+        <h3 class="product-name">Night Notes · บันทึกก่อนนอน</h3>
+        <p class="product-desc">เทมเพลตสั้นๆ สำหรับเขียนก่อนนอน ปล่อยความคิดออกมาจากหัว ก่อนที่มันจะวนซ้ำทั้งคืน</p>
+        <div class="product-includes">
+          <div class="product-include-item">14 หน้า · ไฟล์ PDF</div>
+          <div class="product-include-item">Gratitude + Release prompt</div>
+        </div>
+        <div class="product-footer">
+          <div class="product-price">฿69 <span>/ ดาวน์โหลด</span></div>
+          <button class="btn-buy" onclick="openModal('Night Notes · บันทึกก่อนนอน','69')">ซื้อเลย</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state" id="emptyState">
+      <span class="empty-emoji">🌿</span>
+      <p class="empty-text">กำลังทำ product ใหม่ใน category นี้อยู่นะ<br/>แวะมาใหม่เร็วๆ นี้</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-label">✦ ชำระเงิน</div>
+    <div class="modal-product-name" id="modalName"></div>
+    <div class="modal-price">฿<span id="modalPrice"></span> <span>บาท</span></div>
+
+    <div class="pay-methods">
+      <button class="pay-btn" onclick="selectPay('line')">
+        <div class="pay-icon line">💚</div>
+        <div>
+          <div class="pay-text-name">LINE Pay</div>
+          <div class="pay-text-sub">ชำระผ่าน LINE · ได้รับไฟล์ทันที</div>
+        </div>
+      </button>
+      <button class="pay-btn" onclick="selectPay('prompt')">
+        <div class="pay-icon prompt">📱</div>
+        <div>
+          <div class="pay-text-name">PromptPay</div>
+          <div class="pay-text-sub">โอนแล้วส่ง slip มาที่ LINE ได้เลย</div>
+        </div>
+      </button>
+    </div>
+
+    <div class="modal-note">
+      <strong>หลังชำระเงิน</strong> — ส่งหลักฐานการโอนมาที่ LINE: <strong>@tanjainoto</strong><br/>
+      จะส่งไฟล์ให้ภายใน <strong>24 ชั่วโมง</strong> 🌿
+    </div>
+  </div>
+</div>
+
+<script>
+  // filter
+  document.querySelectorAll('.filter-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const cat=btn.dataset.cat;
+      let visible=0;
+      document.querySelectorAll('.product:not(.empty-state)').forEach(p=>{
+        const match=cat==='all'||p.dataset.cat===cat;
+        p.classList.toggle('hidden',!match);
+        if(match) visible++;
+      });
+      document.getElementById('count').textContent=visible;
+      document.getElementById('emptyState').classList.toggle('show',visible===0);
+    });
+  });
+
+  // modal
+  function openModal(name,price){
+    document.getElementById('modalName').textContent=name;
+    document.getElementById('modalPrice').textContent=price;
+    document.getElementById('modal').classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+  function closeModal(e){
+    if(e&&e.target!==document.getElementById('modal')&&!e.target.classList.contains('modal-close')) return;
+    document.getElementById('modal').classList.remove('open');
+    document.body.style.overflow='';
+  }
+  function selectPay(method){
+    const name=document.getElementById('modalName').textContent;
+    const price=document.getElementById('modalPrice').textContent;
+    if(method==='line'){
+      alert(`เปิด LINE แล้วค้นหา @tanjainoto\nแจ้ง: ${name} · ฿${price}`);
+    } else {
+      alert(`เลขพร้อมเพย์: 0XX-XXX-XXXX\nโอน ฿${price} แล้วส่ง slip มาที่ LINE: @tanjainoto`);
+    }
+    document.getElementById('modal').classList.remove('open');
+    document.body.style.overflow='';
+  }
+</script>
+</body>
+</html>

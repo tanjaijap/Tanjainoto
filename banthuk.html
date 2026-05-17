@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="description" content="บันทึกความรู้สึกรายวัน เขียนตามอารมณ์ แบ่งตาม mood — สำหรับคนที่อยากจดสิ่งที่รู้สึกไว้สักที่หนึ่ง"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Tanjainoto · บันทึก</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Sarabun:wght@300;400;500;600&family=Noto+Serif+JP:wght@300;400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --sage:#7a9e7e; --sage-lt:#a8c5a0; --sage-pale:#ddeadb;
+      --cream:#f5f0e8; --ivory:#faf7f2;
+      --earth:#8b6f47; --earth-dk:#4a3728; --earth-md:#c4a882;
+      --text:#3d3228; --text-s:#6b5a4a; --text-xs:#9c8878;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;} html{scroll-behavior:smooth;}
+    body{font-family:'Sarabun',sans-serif;background:var(--ivory);color:var(--text);overflow-x:hidden;}
+
+    /* NAV */
+    nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;background:rgba(250,247,242,0.92);backdrop-filter:blur(14px);border-bottom:1px solid rgba(196,168,130,0.18);}
+    .logo{font-family:'Playfair Display',serif;font-style:italic;font-size:1.3rem;color:var(--earth-dk);line-height:1;text-decoration:none;display:block;}
+    .logo-jp{font-family:'Noto Serif JP',serif;font-size:.55rem;color:var(--text-xs);letter-spacing:.06em;display:block;font-style:normal;margin-top:2px;}
+    .nav-links{display:flex;gap:1.8rem;list-style:none;}
+    .nav-links a{text-decoration:none;color:var(--text-s);font-size:.86rem;letter-spacing:.04em;transition:color .2s;}
+    .nav-links a:hover,.nav-links a.active{color:var(--sage);}
+    .nav-links a.active{font-weight:600;}
+    .nav-pill{background:var(--earth-dk);color:var(--cream)!important;padding:.4rem 1.1rem;border-radius:999px;}
+    @media(max-width:768px){.nav-links{display:none;}}
+
+    /* PAGE HEADER */
+    .page-header{
+      padding:8rem 2rem 3rem;
+      background:linear-gradient(160deg,var(--sage-pale) 0%,var(--cream) 60%,var(--ivory) 100%);
+      position:relative;overflow:hidden;
+    }
+    .ph-blob{position:absolute;border-radius:60% 40% 70% 30%/50% 65% 35% 50%;pointer-events:none;opacity:.12;animation:morph 18s ease-in-out infinite;}
+    .ph-blob-1{width:380px;height:380px;background:var(--sage);top:-80px;right:-60px;}
+    .ph-blob-2{width:200px;height:200px;background:var(--earth-md);bottom:-50px;left:5%;animation-direction:reverse;animation-duration:24s;}
+    @keyframes morph{0%,100%{border-radius:60% 40% 70% 30%/50% 65% 35% 50%}33%{border-radius:35% 65% 45% 55%/65% 35% 65% 35%}66%{border-radius:50% 50% 35% 65%/40% 60% 40% 60%}}
+    .ph-inner{max-width:780px;margin:0 auto;position:relative;z-index:2;}
+    .ph-label{font-size:.7rem;letter-spacing:.18em;font-weight:700;text-transform:uppercase;color:var(--sage);margin-bottom:.6rem;}
+    .ph-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3rem);color:var(--earth-dk);line-height:1.2;margin-bottom:.4rem;}
+    .ph-title em{font-style:italic;color:var(--sage);}
+    .ph-jp{font-family:'Noto Serif JP',serif;font-size:.75rem;color:var(--text-xs);letter-spacing:.1em;display:block;margin-bottom:.9rem;}
+    .ph-desc{font-size:.97rem;color:var(--text-s);font-weight:300;line-height:1.85;}
+
+    /* FILTER — mood based */
+    .filter-wrap{background:var(--ivory);border-bottom:1px solid rgba(196,168,130,0.15);position:sticky;top:62px;z-index:100;padding:.85rem 2rem;}
+    .filter-inner{max-width:780px;margin:0 auto;display:flex;gap:.55rem;flex-wrap:wrap;align-items:center;}
+    .filter-label{font-size:.68rem;letter-spacing:.1em;font-weight:700;color:var(--text-xs);text-transform:uppercase;margin-right:.3rem;flex-shrink:0;}
+    .filter-btn{padding:.35rem .95rem;border-radius:999px;font-size:.8rem;font-weight:500;border:1.5px solid rgba(196,168,130,0.3);background:transparent;color:var(--text-s);cursor:pointer;transition:all .2s;font-family:'Sarabun',sans-serif;}
+    .filter-btn:hover{border-color:var(--sage);color:var(--sage);}
+    .filter-btn.active{background:var(--earth-dk);color:var(--cream);border-color:var(--earth-dk);}
+
+    /* NOTES LIST — diary style */
+    .notes-wrap{max-width:780px;margin:0 auto;padding:3rem 2rem 6rem;}
+    .notes-count{font-size:.78rem;color:var(--text-xs);margin-bottom:2rem;}
+    .notes-count span{color:var(--sage);font-weight:600;}
+
+    /* NOTE CARD — looks like a torn notebook page */
+    .note{
+      background:var(--cream);
+      border-radius:4px 20px 20px 4px;
+      border-left:3.5px solid var(--sage);
+      padding:1.8rem 2rem;
+      margin-bottom:1.6rem;
+      position:relative;
+      transition:transform .22s, box-shadow .22s;
+      cursor:pointer;
+    }
+    .note:hover{transform:translateX(4px);box-shadow:0 8px 32px rgba(74,55,40,.09);}
+    .note.hidden{display:none;}
+
+    /* mood color per left border */
+    .note[data-mood="heavy"]{border-color:#7a9e7e;}
+    .note[data-mood="ok"]{border-color:#c4a882;}
+    .note[data-mood="night"]{border-color:#6b5b8e;}
+    .note[data-mood="vent"]{border-color:#c47a5a;}
+
+    /* notebook lines texture */
+    .note::before{
+      content:'';position:absolute;inset:0;border-radius:4px 20px 20px 4px;
+      background-image:repeating-linear-gradient(transparent,transparent 27px,rgba(196,168,130,0.1) 27px,rgba(196,168,130,0.1) 28px);
+      pointer-events:none;
+    }
+
+    .note-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;position:relative;}
+    .note-mood{display:flex;align-items:center;gap:.45rem;font-size:.75rem;color:var(--text-xs);}
+    .note-mood-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+    .note[data-mood="heavy"] .note-mood-dot{background:#7a9e7e;}
+    .note[data-mood="ok"] .note-mood-dot{background:#c4a882;}
+    .note[data-mood="night"] .note-mood-dot{background:#6b5b8e;}
+    .note[data-mood="vent"] .note-mood-dot{background:#c47a5a;}
+    .note-date{font-size:.7rem;color:var(--text-xs);font-family:'Noto Serif JP',serif;letter-spacing:.05em;}
+
+    .note-title{font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--earth-dk);line-height:1.4;margin-bottom:.7rem;position:relative;}
+    .note-body{font-size:.92rem;color:var(--text-s);line-height:1.9;font-weight:300;position:relative;}
+
+    /* show first few lines only, fade out */
+    .note-body{max-height:80px;overflow:hidden;position:relative;}
+    .note-body::after{content:'';position:absolute;bottom:0;left:0;right:0;height:36px;background:linear-gradient(transparent,var(--cream));}
+
+    .note-footer{display:flex;align-items:center;justify-content:space-between;margin-top:1.2rem;position:relative;}
+    .note-tags{display:flex;gap:.4rem;flex-wrap:wrap;}
+    .note-tag{font-size:.65rem;background:rgba(122,158,126,.1);color:var(--sage);padding:.18rem .6rem;border-radius:999px;font-weight:500;}
+    .note-read{font-size:.75rem;color:var(--earth-md);font-weight:600;text-decoration:none;display:flex;align-items:center;gap:.3rem;transition:gap .15s;}
+    .note-read:hover{gap:.5rem;}
+
+    /* FEATURED note — bigger, full text preview */
+    .note.featured{
+      background:var(--earth-dk);
+      border-left:none;
+      border-radius:20px;
+      padding:2.2rem;
+      margin-bottom:2rem;
+    }
+    .note.featured::before{display:none;}
+    .note.featured .note-title{color:var(--cream);font-size:1.4rem;}
+    .note.featured .note-body{color:rgba(245,240,232,.65);max-height:none;}
+    .note.featured .note-body::after{display:none;}
+    .note.featured .note-date{color:rgba(245,240,232,.4);}
+    .note.featured .note-mood{color:rgba(245,240,232,.5);}
+    .note.featured .note-tag{background:rgba(255,255,255,.08);color:var(--sage-lt);}
+    .note.featured .note-read{color:var(--sage-lt);}
+    .note.featured:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(74,55,40,.2);}
+
+    /* EMPTY */
+    .empty-state{text-align:center;padding:4rem 2rem;display:none;}
+    .empty-state.show{display:block;}
+    /* DELETE BUTTON */
+    .btn-delete{
+      background:transparent;border:none;cursor:pointer;
+      font-size:.72rem;color:rgba(156,136,120,.4);
+      padding:.2rem .5rem;border-radius:8px;
+      transition:all .2s;font-family:'Sarabun',sans-serif;
+      display:flex;align-items:center;gap:.3rem;
+    }
+    .btn-delete:hover{color:#c47a5a;background:rgba(196,120,90,.08);}
+
+    /* CONFIRM DELETE */
+    .delete-confirm{
+      display:none;position:absolute;
+      bottom:3.5rem;right:0;
+      background:var(--earth-dk);color:var(--cream);
+      border-radius:12px;padding:.7rem 1rem;
+      font-size:.78rem;white-space:nowrap;z-index:10;
+      box-shadow:0 6px 20px rgba(74,55,40,.2);
+    }
+    .delete-confirm.show{display:flex;gap:.6rem;align-items:center;}
+    .dc-yes{background:#c47a5a;color:#fff;border:none;padding:.28rem .7rem;border-radius:999px;font-size:.72rem;cursor:pointer;font-family:'Sarabun',sans-serif;}
+    .dc-no{background:transparent;color:rgba(245,240,232,.6);border:none;font-size:.72rem;cursor:pointer;font-family:'Sarabun',sans-serif;}
+
+    .empty-emoji{font-size:2.5rem;display:block;margin-bottom:.8rem;}
+    .empty-text{font-family:'Playfair Display',serif;font-style:italic;font-size:1rem;color:var(--text-xs);line-height:1.8;}
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="logo">tanjainoto<span class="logo-jp">心の中のノート</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">หน้าแรก</a></li>
+    <li><a href="write.html">เขียนบันทึก</a></li>
+    <li><a href="stories.html">Stories</a></li>
+    <li><a href="quiz.html">Quiz</a></li>
+    <li><a href="shop.html">Shop</a></li>
+    <li><a href="quiz.html" class="nav-pill">ทำ Quiz 🌸</a></li>
+  </ul>
+</nav>
+
+<!-- HEADER -->
+<div class="page-header">
+  <div class="ph-blob ph-blob-1"></div>
+  <div class="ph-blob ph-blob-2"></div>
+  <div class="ph-inner">
+    <p class="ph-label">✦ บันทึก</p>
+    <h1 class="ph-title">แค่<em>เขียน</em>ออกมา</h1>
+    <span class="ph-jp">気持ちをそのまま、ここに書いておく。</span>
+    <p class="ph-desc">จากความรู้สึกกลั้นกรองเป็นความคิด ร้อยเรียงเป็นถ้อยคำ สู่ตัวอักษรบนหน้าเปล่า</p>
+  </div>
+</div>
+
+<!-- FILTER -->
+<div class="filter-wrap">
+  <div class="filter-inner">
+    <span class="filter-label">mood</span>
+    <button class="filter-btn active" data-mood="all">✦ ทั้งหมด</button>
+    <button class="filter-btn" data-mood="heavy">🌧️ วันที่หนักหน่อย</button>
+    <button class="filter-btn" data-mood="ok">☀️ วันที่โอเค</button>
+    <button class="filter-btn" data-mood="night">🌙 ความคิดตอนดึก</button>
+    <button class="filter-btn" data-mood="vent">💭 แค่อยากระบาย</button>
+  </div>
+</div>
+
+<!-- NOTES -->
+<div class="notes-wrap">
+  <p class="notes-count" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;"><span>บันทึกทั้งหมด <span id="count">6</span> หน้า</span><a href="write.html" style="background:var(--sage);color:#fff;padding:.5rem 1.2rem;border-radius:999px;font-size:.82rem;font-weight:600;text-decoration:none;">+ เขียนบันทึกใหม่</a></p>
+
+  <!-- FEATURED -->
+  <div class="note featured" data-mood="night">
+    <div class="note-header">
+      <div class="note-mood"><div class="note-mood-dot"></div>🌙 ความคิดตอนดึก</div>
+      <span class="note-date">13 พ.ค. 2568</span>
+    </div>
+    <h2 class="note-title">บางคืนก็แค่อยากให้มีใครบอกว่า "เหนื่อยก็พักได้นะ" โดยที่ไม่ต้องอธิบายอะไรเพิ่ม</h2>
+    <p class="note-body">นอนไม่หลับอีกแล้ว นอนอยู่บนเตียง แต่หัวไม่ยอมหยุด คิดเรื่องงาน คิดเรื่องที่พูดไปเมื่อกี้ว่ามันฟังดูแปลกไหม คิดว่าพรุ่งนี้จะเป็นยังไง ทั้งที่จริงๆ ก็ไม่ได้มีอะไรน่าคิดขนาดนั้นเลย แต่สมองมันก็ยังวนอยู่อย่างนั้น...</p>
+    <div class="note-footer" style="position:relative;">
+      <div class="delete-confirm"><span>ลบบันทึกนี้?</span><button class="dc-yes" onclick="confirmDelete(this)">ลบ</button><button class="dc-no" onclick="cancelDelete(this)">ยกเลิก</button></div>
+      <div class="note-tags"><span class="note-tag">นอนไม่หลับ</span><span class="note-tag">ความคิด</span></div>
+      <div style="display:flex;align-items:center;gap:.5rem;"><a href="write.html" class="note-read">อ่านต่อ ›</a><button class="btn-delete" onclick="askDelete(this)" title="ลบ">🗑️</button></div>
+    </div>
+  </div>
+
+  <!-- HEAVY -->
+  <div class="note" data-mood="heavy">
+    <div class="note-header">
+      <div class="note-mood"><div class="note-mood-dot"></div>🌧️ วันที่หนักหน่อย</div>
+      <span class="note-date">2 พ.ค. 2568</span>
+    </div>
+    <h2 class="note-title">วันนี้ไม่ได้ทำอะไรเลย แล้วก็รู้สึกผิดกับตัวเอง</h2>
+    <p class="note-body">ตื่นมาตั้งใจว่าจะทำสิ่งนั้นสิ่งนี้ แต่สุดท้ายก็แค่นอนดูซีรี่ส์จนเย็น แล้วก็รู้สึกเหมือนวันมันเสียไปเปล่าๆ ทั้งที่จริงๆ อาจแค่ต้องการพักก็ได้ แต่ไม่รู้ทำไมถึงรู้สึกผิดทุกครั้ง...</p>
+    <div class="note-footer" style="position:relative;">
+      <div class="delete-confirm"><span>ลบบันทึกนี้?</span><button class="dc-yes" onclick="confirmDelete(this)">ลบ</button><button class="dc-no" onclick="cancelDelete(this)">ยกเลิก</button></div>
+      <div class="note-tags"><span class="note-tag">วันหนัก</span><span class="note-tag">รู้สึกผิด</span></div>
+      <div style="display:flex;align-items:center;gap:.5rem;"><a href="write.html" class="note-read">อ่านต่อ ›</a><button class="btn-delete" onclick="askDelete(this)" title="ลบ">🗑️</button></div>
+    </div>
+  </div>
+
+  <!-- OK -->
+  <div class="note" data-mood="ok">
+    <div class="note-header">
+      <div class="note-mood"><div class="note-mood-dot"></div>☀️ วันที่โอเค</div>
+      <span class="note-date">28 เม.ย. 2568</span>
+    </div>
+    <h2 class="note-title">วันนี้ซื้อกาแฟแก้วโปรด แล้วรู้สึกว่าโลกดีขึ้นมาหน่อยนึง</h2>
+    <p class="note-body">ไม่ได้มีอะไรพิเศษ แค่อากาศดี เดินออกไปข้างนอก นั่งอยู่ตรงนั้นคนเดียว ดื่มกาแฟ แล้วรู้สึกว่าโอเค ชีวิตก็ไม่ได้แย่ขนาดนั้น บางทีความสุขมันเล็กมากจนเราเกือบไม่ทัน notice...</p>
+    <div class="note-footer" style="position:relative;">
+      <div class="delete-confirm"><span>ลบบันทึกนี้?</span><button class="dc-yes" onclick="confirmDelete(this)">ลบ</button><button class="dc-no" onclick="cancelDelete(this)">ยกเลิก</button></div>
+      <div class="note-tags"><span class="note-tag">ช่วงเวลาเล็กๆ</span><span class="note-tag">โอเค</span></div>
+      <div style="display:flex;align-items:center;gap:.5rem;"><a href="write.html" class="note-read">อ่านต่อ ›</a><button class="btn-delete" onclick="askDelete(this)" title="ลบ">🗑️</button></div>
+    </div>
+  </div>
+
+  <!-- VENT -->
+  <div class="note" data-mood="vent">
+    <div class="note-header">
+      <div class="note-mood"><div class="note-mood-dot"></div>💭 แค่อยากระบาย</div>
+      <span class="note-date">20 เม.ย. 2568</span>
+    </div>
+    <h2 class="note-title">ทำไมการบอกว่า "ฉันต้องการความช่วยเหลือ" มันถึงรู้สึกยากจัง</h2>
+    <p class="note-body">รู้อยู่แก่ใจว่าเหนื่อย รู้ว่าต้องการใครสักคน แต่พอจะพูดออกไปจริงๆ มันติดอยู่ที่คอ กลัวว่าจะดูอ่อนแอ กลัวว่าจะเป็นภาระ ทั้งที่ถ้าเป็นเพื่อน เราก็จะบอกให้เขาพูดออกมาได้เลย...</p>
+    <div class="note-footer" style="position:relative;">
+      <div class="delete-confirm"><span>ลบบันทึกนี้?</span><button class="dc-yes" onclick="confirmDelete(this)">ลบ</button><button class="dc-no" onclick="cancelDelete(this)">ยกเลิก</button></div>
+      <div class="note-tags"><span class="note-tag">ระบาย</span><span class="note-tag">ขอความช่วยเหลือ</span></div>
+      <div style="display:flex;align-items:center;gap:.5rem;"><a href="write.html" class="note-read">อ่านต่อ ›</a><button class="btn-delete" onclick="askDelete(this)" title="ลบ">🗑️</button></div>
+    </div>
+  </div>
+
+  <!-- NIGHT -->
+  <div class="note" data-mood="night">
+    <div class="note-header">
+      <div class="note-mood"><div class="note-mood-dot"></div>🌙 ความคิดตอนดึก</div>
+      <span class="note-date">15 เม.ย. 2568</span>
+    </div>
+    <h2 class="note-title">ตอนดึกๆ เราจะเห็นตัวเองชัดขึ้น หรือแค่ overthink เอง?</h2>
+    <p class="note-body">มีบางอย่างที่รู้สึกได้ชัดเจนมากตอนกลางคืน แต่พอตื่นมาเช้า มันก็จางไป แบบว่าเมื่อคืนคิดอะไรไปนักหนา แต่ตอนนี้ก็... ก็ยังไม่รู้เหมือนกัน...</p>
+    <div class="note-footer" style="position:relative;">
+      <div class="delete-confirm"><span>ลบบันทึกนี้?</span><button class="dc-yes" onclick="confirmDelete(this)">ลบ</button><button class="dc-no" onclick="cancelDelete(this)">ยกเลิก</button></div>
+      <div class="note-tags"><span class="note-tag">ดึก</span><span class="note-tag">overthink</span></div>
+      <div style="display:flex;align-items:center;gap:.5rem;"><a href="write.html" class="note-read">อ่านต่อ ›</a><button class="btn-delete" onclick="askDelete(this)" title="ลบ">🗑️</button></div>
+    </div>
+  </div>
+
+  <!-- OK -->
+  <div class="note" data-mood="ok">
+    <div class="note-header">
+      <div class="note-mood"><div class="note-mood-dot"></div>☀️ วันที่โอเค</div>
+      <span class="note-date">8 เม.ย. 2568</span>
+    </div>
+    <h2 class="note-title">เริ่มเขียนสิ่งที่รู้สึกทุกวัน แล้วพบว่าตัวเองไม่รู้จักตัวเองเลย</h2>
+    <p class="note-body">ลองเปิดสมุดแล้วเขียนว่าวันนี้รู้สึกยังไง แต่นั่งอยู่นาน ไม่รู้จะเขียนอะไร ทั้งที่ก็รู้สึกอะไรบางอย่างอยู่ในใจ แค่หาคำไม่เจอ...</p>
+    <div class="note-footer" style="position:relative;">
+      <div class="delete-confirm"><span>ลบบันทึกนี้?</span><button class="dc-yes" onclick="confirmDelete(this)">ลบ</button><button class="dc-no" onclick="cancelDelete(this)">ยกเลิก</button></div>
+      <div class="note-tags"><span class="note-tag">เขียน</span><span class="note-tag">รู้จักตัวเอง</span></div>
+      <div style="display:flex;align-items:center;gap:.5rem;"><a href="write.html" class="note-read">อ่านต่อ ›</a><button class="btn-delete" onclick="askDelete(this)" title="ลบ">🗑️</button></div>
+    </div>
+  </div>
+
+  <div class="empty-state" id="emptyState">
+    <span class="empty-emoji">🌿</span>
+    <p class="empty-text">ยังไม่มีบันทึกใน mood นี้<br/>แวะมาใหม่เร็วๆ นี้นะ</p>
+  </div>
+</div>
+
+<script>
+  function askDelete(btn){
+    const footer = btn.closest('.note-footer');
+    const confirm = footer.querySelector('.delete-confirm');
+    document.querySelectorAll('.delete-confirm.show').forEach(el=>el.classList.remove('show'));
+    confirm.classList.add('show');
+  }
+  function confirmDelete(btn){
+    const note = btn.closest('.note');
+    note.style.transition='all .3s';
+    note.style.opacity='0';
+    note.style.transform='translateX(20px)';
+    setTimeout(()=>note.remove(), 300);
+    // update count
+    const count = document.querySelectorAll('.note:not(.empty-state)').length;
+    const countEl = document.getElementById('count');
+    if(countEl) countEl.textContent = count + ' หน้า';
+  }
+  function cancelDelete(btn){
+    btn.closest('.delete-confirm').classList.remove('show');
+  }
+  // ปิด confirm เมื่อคลิกที่อื่น
+  document.addEventListener('click', e=>{
+    if(!e.target.closest('.note-footer')){
+      document.querySelectorAll('.delete-confirm.show').forEach(el=>el.classList.remove('show'));
+    }
+  });
+
+  const btns = document.querySelectorAll('.filter-btn');
+  const notes = document.querySelectorAll('.note:not(.empty-state)');
+  const countEl = document.getElementById('count');
+  const empty = document.getElementById('emptyState');
+
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      btns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const mood = btn.dataset.mood;
+      let visible = 0;
+      notes.forEach(note => {
+        const match = mood === 'all' || note.dataset.mood === mood;
+        note.classList.toggle('hidden', !match);
+        if (match) visible++;
+      });
+      countEl.textContent = visible;
+      empty.classList.toggle('show', visible === 0);
+    });
+  });
+</script>
+</body>
+</html>

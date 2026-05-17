@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="description" content="ติดต่อแทนใจ — ส่งข้อความ สอบถาม หรือพูดคุยได้เลยที่ Tanjai.heartstroke@gmail.com"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Tanjainoto · ติดต่อ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Sarabun:wght@300;400;500;600&family=Noto+Serif+JP:wght@300;400&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --sage:#7a9e7e;--sage-lt:#a8c5a0;--sage-pale:#ddeadb;--sage-mist:#eef5ec;
+      --cream:#f5f0e8;--ivory:#faf7f2;
+      --earth:#8b6f47;--earth-dk:#4a3728;--earth-md:#c4a882;
+      --text:#3d3228;--text-s:#6b5a4a;--text-xs:#9c8878;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;} html{scroll-behavior:smooth;}
+    body{font-family:'Sarabun',sans-serif;background:var(--ivory);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+
+    /* NAV */
+    nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;background:rgba(250,247,242,0.93);backdrop-filter:blur(14px);border-bottom:1px solid rgba(196,168,130,0.18);}
+    .logo{font-family:'Playfair Display',serif;font-style:italic;font-size:1.3rem;color:var(--earth-dk);text-decoration:none;line-height:1;}
+    .logo-jp{font-family:'Noto Serif JP',serif;font-size:.55rem;color:var(--text-xs);letter-spacing:.06em;display:block;font-style:normal;margin-top:2px;}
+    .nav-links{display:flex;gap:1.8rem;list-style:none;}
+    .nav-links a{text-decoration:none;color:var(--text-s);font-size:.86rem;transition:color .2s;}
+    .nav-links a:hover{color:var(--sage);}
+    @media(max-width:768px){.nav-links{display:none;}}
+
+    /* MAIN */
+    main{flex:1;display:flex;align-items:center;justify-content:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden;}
+
+    /* bg blobs */
+    .blob{position:absolute;border-radius:60% 40% 70% 30%/50% 65% 35% 50%;pointer-events:none;animation:morph 20s ease-in-out infinite;}
+    .b1{width:380px;height:380px;background:var(--sage-pale);top:-80px;right:-80px;opacity:.5;}
+    .b2{width:220px;height:220px;background:var(--earth-md);bottom:-50px;left:-40px;opacity:.1;animation-direction:reverse;}
+    @keyframes morph{0%,100%{border-radius:60% 40% 70% 30%/50% 65% 35% 50%}33%{border-radius:35% 65% 45% 55%/65% 35% 65% 35%}66%{border-radius:50% 50% 35% 65%/40% 60% 40% 60%}}
+
+    /* CONTACT WRAP */
+    .contact-wrap{max-width:560px;width:100%;position:relative;z-index:2;}
+
+    /* HEADER */
+    .contact-label{font-size:.7rem;letter-spacing:.18em;font-weight:700;text-transform:uppercase;color:var(--sage);margin-bottom:.6rem;}
+    .contact-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,2.8rem);color:var(--earth-dk);line-height:1.25;margin-bottom:.5rem;}
+    .contact-title em{font-style:italic;color:var(--sage);}
+    .contact-jp{font-family:'Noto Serif JP',serif;font-size:.75rem;color:var(--text-xs);letter-spacing:.1em;display:block;margin-bottom:.9rem;}
+    .contact-desc{font-size:.95rem;color:var(--text-s);font-weight:300;line-height:1.85;margin-bottom:2rem;}
+
+    /* EMAIL CHIP */
+    .email-chip{
+      display:inline-flex;align-items:center;gap:.7rem;
+      background:var(--cream);border:1.5px solid rgba(196,168,130,.25);
+      border-radius:16px;padding:.85rem 1.2rem;margin-bottom:2rem;
+      text-decoration:none;transition:all .2s;cursor:pointer;
+    }
+    .email-chip:hover{border-color:var(--sage);background:var(--sage-pale);}
+    .email-icon{width:36px;height:36px;border-radius:10px;background:var(--sage-pale);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;transition:background .2s;}
+    .email-chip:hover .email-icon{background:var(--sage-lt);}
+    .email-text-name{font-size:.88rem;font-weight:600;color:var(--earth-dk);}
+    .email-text-addr{font-size:.78rem;color:var(--text-xs);}
+
+    /* DIVIDER */
+    .divider{display:flex;align-items:center;gap:.8rem;margin-bottom:1.8rem;}
+    .divider-line{flex:1;height:1px;background:rgba(196,168,130,.2);}
+    .divider-text{font-size:.7rem;color:var(--text-xs);letter-spacing:.08em;}
+
+    /* FORM */
+    .form{display:flex;flex-direction:column;gap:1rem;}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+    .field{display:flex;flex-direction:column;gap:.4rem;}
+    .field-label{font-size:.72rem;letter-spacing:.1em;font-weight:700;text-transform:uppercase;color:var(--text-xs);}
+    .field input,.field textarea,.field select{
+      background:var(--cream);border:1.5px solid rgba(196,168,130,.22);
+      border-radius:14px;padding:.8rem 1rem;
+      font-size:.92rem;color:var(--text);font-family:'Sarabun',sans-serif;
+      outline:none;transition:border-color .2s;width:100%;
+    }
+    .field input:focus,.field textarea:focus{border-color:var(--sage);}
+    .field input::placeholder,.field textarea::placeholder{color:rgba(156,136,120,.4);}
+    .field textarea{min-height:130px;resize:none;line-height:1.7;}
+
+    /* topic select */
+    .field select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239c8878' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;}
+
+    .btn-send{
+      background:var(--earth-dk);color:var(--cream);
+      border:none;border-radius:14px;padding:1rem;
+      font-size:.95rem;font-weight:600;cursor:pointer;
+      transition:all .22s;font-family:'Sarabun',sans-serif;
+      display:flex;align-items:center;justify-content:center;gap:.5rem;
+    }
+    .btn-send:hover{background:var(--sage);transform:translateY(-2px);}
+
+    /* SUCCESS STATE */
+    .success{
+      display:none;text-align:center;padding:2rem;
+      background:var(--sage-pale);border-radius:20px;
+      border:1px solid rgba(122,158,126,.2);
+    }
+    .success.show{display:block;}
+    .success-emoji{font-size:2.5rem;display:block;margin-bottom:.8rem;}
+    .success-title{font-family:'Playfair Display',serif;font-style:italic;font-size:1.2rem;color:var(--earth-dk);margin-bottom:.4rem;}
+    .success-sub{font-size:.85rem;color:var(--text-s);line-height:1.7;}
+
+    /* FOOTER */
+    footer{background:var(--cream);padding:1.5rem 2rem;text-align:center;border-top:1px solid rgba(196,168,130,.15);}
+    .foot-text{font-size:.75rem;color:var(--text-xs);}
+    .foot-jp{font-family:'Noto Serif JP',serif;font-size:.65rem;color:rgba(156,136,120,.5);display:block;margin-top:.2rem;}
+
+    @media(max-width:560px){.form-row{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">tanjainoto<span class="logo-jp">心の中のノート</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">หน้าแรก</a></li>
+    <li><a href="banthuk.html">บันทึก</a></li>
+    <li><a href="stories.html">Stories</a></li>
+    <li><a href="quiz.html">Quiz</a></li>
+    <li><a href="shop.html">Shop</a></li>
+    <li><a href="quiz.html" class="nav-pill">ทำ Quiz 🌸</a></li>
+  </ul>
+</nav>
+
+<main>
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+
+  <div class="contact-wrap">
+
+    <p class="contact-label">✦ ติดต่อ</p>
+    <h1 class="contact-title">พูดคุยกับ<em>แทนใจ</em></h1>
+    <span class="contact-jp">お気軽にどうぞ</span>
+    <p class="contact-desc">
+      ไม่ว่าจะอยากถามเรื่อง digital product
+      มีข้อเสนอแนะ หรืออยากแค่บอกว่าที่นี่ช่วยได้บ้าง
+      เขียนมาได้เลยนะ 🌿
+    </p>
+
+    <!-- EMAIL -->
+    <a href="mailto:Tanjai.heartstroke@gmail.com" class="email-chip">
+      <div class="email-icon">✉️</div>
+      <div>
+        <div class="email-text-name">Email</div>
+        <div class="email-text-addr">Tanjai.heartstroke@gmail.com</div>
+      </div>
+    </a>
+
+    <!-- GUIDELINE -->
+    <div style="background:linear-gradient(135deg,#f5f0e8,#eef5ec);border-radius:18px;padding:1.3rem 1.5rem;margin-bottom:1.8rem;border:1px solid rgba(122,158,126,.15);">
+      <div style="font-family:'Noto Serif JP',serif;font-size:.75rem;color:#9c8878;letter-spacing:.1em;margin-bottom:.45rem;">この場所は優しさで満たされています</div>
+      <div style="font-size:.88rem;color:#6b5a4a;line-height:1.85;font-weight:300;">
+        ขอให้ทุกคนระลึกไว้ว่า <strong style="color:#4a3728;font-weight:500;">มีความอ่อนโยนในตัวเราเสมอ</strong><br/>
+        จงสื่อสารด้วยใจที่มีเมตตา 🌿
+      </div>
+    </div>
+
+    <!-- DIVIDER -->
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span class="divider-text">หรือส่งข้อความตรงนี้ได้เลย</span>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- FORM -->
+    <div class="form" id="contactForm">
+      <div class="form-row">
+        <div class="field">
+          <label class="field-label">ชื่อ</label>
+          <input type="text" id="nameInput" placeholder="ชื่อของคุณ"/>
+        </div>
+        <div class="field">
+          <label class="field-label">Email</label>
+          <input type="email" id="emailInput" placeholder="your@email.com"/>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">เรื่องที่อยากคุย</label>
+        <select id="topicInput">
+          <option value="" disabled selected>เลือกหัวข้อ...</option>
+          <option value="product">สอบถาม Digital Products</option>
+          <option value="collab">ชวน Collaborate</option>
+          <option value="feedback">ให้ feedback เว็บ</option>
+          <option value="story">อยากเล่าเรื่องให้ฟัง</option>
+          <option value="other">อื่นๆ</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field-label">ข้อความ</label>
+        <textarea id="msgInput" placeholder="เขียนอะไรก็ได้ ไม่ต้องสวยงาม 🌿"></textarea>
+      </div>
+
+      <button class="btn-send" onclick="sendMsg()">
+        ส่งข้อความ ✦
+      </button>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="success" id="successMsg">
+      <span class="success-emoji">🌸</span>
+      <div class="success-title">ได้รับข้อความแล้ว!</div>
+      <div class="success-sub">ขอบคุณที่เขียนมานะ จะรีบตอบกลับภายใน 1-2 วัน 🌿</div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="foot-text">tanjainoto · แทนใจ</div>
+  <span class="foot-jp">すべては必然 · ทุกอย่างที่เกิดขึ้นนั้นล้วนมีความหมาย</span>
+</footer>
+
+<script>
+  function sendMsg(){
+    const name  = document.getElementById('nameInput').value.trim();
+    const email = document.getElementById('emailInput').value.trim();
+    const msg   = document.getElementById('msgInput').value.trim();
+    if(!name || !email || !msg){
+      alert('กรอกชื่อ email และข้อความก่อนนะ 🌿');
+      return;
+    }
+    document.getElementById('contactForm').style.display = 'none';
+    document.getElementById('successMsg').classList.add('show');
+  }
+</script>
+</body>
+</html>

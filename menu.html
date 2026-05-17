@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tanjainoto · Menu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Sarabun:wght@300;400;500;600&family=Noto+Serif+JP:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --sage:      #7a9e7e;
+      --sage-lt:   #a8c5a0;
+      --sage-pale: #ddeadb;
+      --cream:     #f5f0e8;
+      --ivory:     #faf7f2;
+      --earth:     #8b6f47;
+      --earth-dk:  #4a3728;
+      --earth-md:  #c4a882;
+      --text:      #3d3228;
+      --text-s:    #6b5a4a;
+      --text-xs:   #9c8878;
+      /* witch accent */
+      --witch:     #6b5b8e;
+      --witch-lt:  #ede8f4;
+      --witch-md:  #b8a8d4;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { height:100%; font-family:'Sarabun',sans-serif; background:var(--ivory); }
+    .jp { font-family:'Noto Serif JP', serif; }
+
+    /* ── NAV ── */
+    nav {
+      position:fixed; top:0; left:0; right:0; z-index:200;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:1rem 1.5rem;
+      background:rgba(250,247,242,0.92);
+      backdrop-filter:blur(14px);
+      border-bottom:1px solid rgba(196,168,130,0.18);
+    }
+    .logo {
+      font-family:'Playfair Display',serif; font-style:italic;
+      font-size:1.3rem; color:var(--earth-dk); line-height:1;
+    }
+    .logo-jp {
+      font-family:'Noto Serif JP',serif; font-size:.58rem;
+      color:var(--text-xs); letter-spacing:.06em;
+      display:block; font-style:normal; margin-top:3px;
+    }
+
+    .burger {
+      width:40px; height:40px; border:none; background:transparent;
+      cursor:pointer; display:flex; flex-direction:column;
+      align-items:center; justify-content:center; gap:5px;
+      border-radius:12px; transition:background .2s;
+    }
+    .burger:hover { background:var(--sage-pale); }
+    .burger-line {
+      width:22px; height:1.8px; background:var(--earth-dk);
+      border-radius:2px; transition:all .38s cubic-bezier(.4,0,.2,1);
+    }
+    .burger.open .burger-line:nth-child(1) { transform:translateY(6.8px) rotate(45deg); }
+    .burger.open .burger-line:nth-child(2) { opacity:0; transform:scaleX(0); }
+    .burger.open .burger-line:nth-child(3) { transform:translateY(-6.8px) rotate(-45deg); }
+
+    /* ── OVERLAY ── */
+    .menu-overlay {
+      position:fixed; inset:0; z-index:150; pointer-events:none;
+    }
+    .menu-backdrop {
+      position:absolute; inset:0;
+      background:rgba(250,247,242,0.97);
+      backdrop-filter:blur(24px);
+      opacity:0; transition:opacity .45s ease;
+    }
+    .menu-overlay.open .menu-backdrop { opacity:1; pointer-events:all; }
+
+    .menu-inner {
+      position:relative; z-index:2;
+      height:100%; display:flex; flex-direction:column;
+      padding:4.8rem 1.6rem 1.6rem;
+      overflow-y:auto;
+    }
+
+    /* ── QUOTE ── */
+    .menu-quote {
+      margin-bottom:.8rem;
+      padding-bottom:.8rem;
+      border-bottom:1px solid rgba(196,168,130,0.2);
+      opacity:0; transform:translateY(12px);
+      transition:opacity .45s .08s ease, transform .45s .08s ease;
+    }
+    .menu-overlay.open .menu-quote { opacity:1; transform:translateY(0); }
+    .quote-jp {
+      font-family:'Noto Serif JP',serif;
+      font-size:.85rem; color:var(--earth-dk);
+      letter-spacing:.07em; line-height:1.65; display:block; margin-bottom:.25rem;
+    }
+    .quote-th { font-size:.7rem; color:var(--text-xs); font-weight:300; }
+
+    /* ── USER ── */
+    .menu-user {
+      display:flex; align-items:center; gap:.8rem;
+      padding-bottom:.8rem;
+      border-bottom:1px solid rgba(196,168,130,0.2);
+      margin-bottom:.1rem;
+      opacity:0; transform:translateY(12px);
+      transition:opacity .4s .16s ease, transform .4s .16s ease;
+    }
+    .menu-overlay.open .menu-user { opacity:1; transform:translateY(0); }
+    .user-avatar {
+      width:42px; height:42px; border-radius:50%;
+      background:var(--sage-pale); display:flex; align-items:center;
+      justify-content:center; font-size:1.2rem;
+      border:1.5px solid rgba(122,158,126,0.3);
+    }
+    .user-name { font-size:.9rem; font-weight:600; color:var(--earth-dk); }
+    .user-sub  { font-size:.7rem; color:var(--text-xs); }
+    .login-btn {
+      margin-left:auto;
+      font-size:.75rem; color:var(--sage); font-weight:600;
+      background:var(--sage-pale); border:none; padding:.32rem .85rem;
+      border-radius:999px; cursor:pointer; text-decoration:none;
+      transition:background .2s;
+    }
+    .login-btn:hover { background:var(--sage-lt); color:#fff; }
+
+    /* ── LIST ── */
+    .menu-list { list-style:none; flex:1; }
+
+    .menu-section-label {
+      display:flex; align-items:center; gap:.6rem;
+      padding:.55rem 0 .2rem;
+      opacity:0; transition:opacity .4s ease;
+    }
+    .menu-overlay.open .menu-section-label { opacity:1; }
+    .msl-text { font-size:.63rem; letter-spacing:.15em; font-weight:700; color:var(--text-xs); text-transform:uppercase; }
+    .msl-line  { flex:1; height:1px; background:rgba(196,168,130,0.2); }
+
+    .menu-item {
+      opacity:0; transform:translateX(-14px);
+      transition:opacity .38s ease, transform .38s ease;
+    }
+    .menu-overlay.open .menu-item { opacity:1; transform:translateX(0); }
+    .menu-overlay.open .menu-item:nth-child(1){ transition-delay:.18s; }
+    .menu-overlay.open .menu-item:nth-child(2){ transition-delay:.23s; }
+    .menu-overlay.open .menu-item:nth-child(3){ transition-delay:.28s; }
+    .menu-overlay.open .menu-item:nth-child(4){ transition-delay:.33s; }
+    .menu-overlay.open .menu-item:nth-child(5){ transition-delay:.38s; }
+    .menu-overlay.open .menu-item:nth-child(6){ transition-delay:.43s; }
+
+    .menu-link {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:.7rem 0;
+      border-bottom:1px solid rgba(196,168,130,0.13);
+      text-decoration:none; cursor:pointer;
+      transition:padding-left .22s;
+    }
+    .menu-link:hover { padding-left:.5rem; }
+    .menu-link:hover .ml-arrow { opacity:1; transform:translateX(0); }
+    .menu-link:hover .ml-icon  { transform:scale(1.08); }
+
+    .ml-left { display:flex; align-items:center; gap:.85rem; }
+    .ml-icon {
+      width:38px; height:38px; border-radius:12px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.05rem; flex-shrink:0; transition:transform .2s;
+    }
+    .ic-green  { background:var(--sage-pale); }
+    .ic-warm   { background:#f0e6d8; }
+    .ic-purple { background:#ede8f4; }
+    .ic-blue   { background:#e8eef5; }
+
+    /* witch icon — special */
+    .ic-witch {
+      background: linear-gradient(135deg, #2d1f4a, #4a3270);
+      position:relative; overflow:hidden;
+    }
+    .ic-witch::before {
+      content:'';
+      position:absolute; inset:0;
+      background:radial-gradient(circle at 60% 40%, rgba(184,168,212,.25), transparent 70%);
+    }
+
+    .ml-name { font-size:1.05rem; font-weight:500; color:var(--earth-dk); }
+    .ml-sub  { font-size:.72rem; color:var(--text-xs); margin-top:.08rem; }
+
+    /* witch item — name in purple */
+    .menu-item.witch .ml-name { color:var(--witch); }
+    .menu-item.witch .ml-sub  { color:var(--witch-md); }
+
+    /* new badge */
+    .badge-new {
+      font-size:.6rem; font-weight:700; letter-spacing:.08em;
+      background:var(--witch); color:#fff;
+      padding:.15rem .5rem; border-radius:999px;
+      text-transform:uppercase; margin-left:.5rem;
+      vertical-align:middle;
+    }
+
+    /* witch card — expanded feel */
+    .witch-card {
+      margin: .2rem 0 .4rem;
+      background:linear-gradient(135deg, #2d1f4a 0%, #3d2860 60%, #4a3270 100%);
+      border-radius:16px; padding:.9rem 1rem;
+      display:flex; align-items:center; gap:.85rem;
+      cursor:pointer; transition:transform .2s, box-shadow .2s;
+      text-decoration:none;
+      border:1px solid rgba(184,168,212,.15);
+      position:relative; overflow:hidden;
+    }
+    .witch-card::before {
+      content:'';
+      position:absolute; top:-30px; right:-20px;
+      width:120px; height:120px; border-radius:50%;
+      background:radial-gradient(circle, rgba(184,168,212,.18), transparent 70%);
+    }
+    .witch-card::after {
+      content:'✨';
+      position:absolute; bottom:8px; right:14px;
+      font-size:.85rem; opacity:.4;
+    }
+    .witch-card:hover { transform:translateY(-2px); box-shadow:0 10px 32px rgba(45,31,74,.25); }
+    .wc-icon { font-size:2rem; flex-shrink:0; position:relative; z-index:1; }
+    .wc-body { position:relative; z-index:1; }
+    .wc-title {
+      font-family:'Playfair Display',serif; font-style:italic;
+      font-size:1rem; color:#e8e0f8; line-height:1.3; margin-bottom:.25rem;
+    }
+    .wc-sub { font-size:.72rem; color:rgba(232,224,248,.5); line-height:1.5; }
+    .wc-ep  {
+      display:inline-block; margin-top:.5rem;
+      font-size:.65rem; font-weight:700; letter-spacing:.1em;
+      background:rgba(255,255,255,.1); color:var(--witch-md);
+      border:1px solid rgba(184,168,212,.25);
+      padding:.2rem .6rem; border-radius:999px; text-transform:uppercase;
+    }
+
+    .ml-arrow {
+      font-size:1rem; color:var(--sage);
+      opacity:0; transform:translateX(-5px);
+      transition:all .2s;
+    }
+    .menu-item.current .ml-name { color:var(--sage); }
+    .menu-item.current .ml-icon { box-shadow:0 0 0 1.5px rgba(122,158,126,.4); }
+
+    /* ── BOTTOM ── */
+    .menu-bottom {
+      padding-top:.9rem;
+      opacity:0; transform:translateY(10px);
+      transition:opacity .4s .52s ease, transform .4s .52s ease;
+    }
+    .menu-overlay.open .menu-bottom { opacity:1; transform:translateY(0); }
+    .menu-cta {
+      display:block; text-align:center; text-decoration:none;
+      background:var(--earth-dk); color:var(--cream);
+      padding:.72rem; border-radius:14px;
+      font-size:.88rem; font-weight:500; letter-spacing:.03em;
+      margin-bottom:.65rem; transition:background .2s;
+    }
+    .menu-cta:hover { background:var(--sage); }
+    .menu-footer { text-align:center; }
+    .mf-jp  { font-family:'Noto Serif JP',serif; font-size:.7rem; color:var(--text-xs); letter-spacing:.08em; display:block; }
+    .mf-sub { font-size:.68rem; color:rgba(156,136,120,.45); margin-top:.25rem; display:block; }
+
+    /* ── DEMO PAGE ── */
+    .demo-page {
+      display:flex; align-items:center; justify-content:center;
+      min-height:100vh; flex-direction:column; gap:.7rem;
+      padding-top:4rem; text-align:center; position:relative; z-index:1;
+    }
+    .demo-jp { font-family:'Noto Serif JP',serif; font-size:.88rem; color:var(--text-xs); letter-spacing:.14em; }
+    .demo-page h1 { font-family:'Playfair Display',serif; font-size:2.2rem; color:var(--earth-dk); font-style:italic; }
+    .demo-hint {
+      margin-top:1.8rem; display:flex; align-items:center; gap:.6rem;
+      font-size:.78rem; color:var(--text-xs);
+      border:1px dashed rgba(196,168,130,.4); padding:.5rem 1.1rem; border-radius:999px;
+    }
+
+    /* blobs */
+    .bg-blob { position:fixed; border-radius:60% 40% 70% 30%/50% 65% 35% 50%; pointer-events:none; opacity:.09; z-index:0; animation:morph 20s ease-in-out infinite; }
+    .bb1{width:380px;height:380px;background:var(--sage);top:-80px;right:-80px;}
+    .bb2{width:240px;height:240px;background:var(--earth-md);bottom:-50px;left:-50px;animation-direction:reverse;}
+    @keyframes morph{0%,100%{border-radius:60% 40% 70% 30%/50% 65% 35% 50%}33%{border-radius:35% 65% 45% 55%/65% 35% 65% 35%}66%{border-radius:50% 50% 35% 65%/40% 60% 40% 60%}}
+  </style>
+</head>
+<body>
+
+<div class="bg-blob bb1"></div>
+<div class="bg-blob bb2"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    tanjainoto
+    <span class="logo-jp">心の中のノート</span>
+  </div>
+  <button class="burger" id="burger" aria-label="open menu">
+    <div class="burger-line"></div>
+    <div class="burger-line"></div>
+    <div class="burger-line"></div>
+  </button>
+</nav>
+
+<!-- OVERLAY -->
+<div class="menu-overlay" id="menuOverlay">
+  <div class="menu-backdrop" id="menuBackdrop"></div>
+
+  <div class="menu-inner">
+
+    <div class="menu-quote">
+      <span class="quote-jp">自分自身に戻る旅へ、ようこそ。</span>
+      <span class="quote-th">ยินดีต้อนรับสู่การเดินทางกลับมาหาตัวเอง</span>
+    </div>
+
+    <div class="menu-user">
+      <div class="user-avatar">🌿</div>
+      <div>
+        <div class="user-name">Hello ✦</div>
+        <div class="user-sub">Welcome to tanjainoto</div>
+      </div>
+      <a href="#" class="login-btn">Log in</a>
+    </div>
+
+    <ul class="menu-list">
+
+      <li class="menu-section-label">
+        <span class="msl-text">Explore</span>
+        <span class="msl-line"></span>
+      </li>
+
+      <li class="menu-item current">
+        <a href="index.html" class="menu-link">
+          <div class="ml-left">
+            <div class="ml-icon ic-green">🏡</div>
+            <div>
+              <div class="ml-name">Home</div>
+              <div class="ml-sub">Back to the beginning</div>
+            </div>
+          </div>
+          <span class="ml-arrow">›</span>
+        </a>
+      </li>
+
+      <li class="menu-item">
+        <a href="quiz.html" class="menu-link">
+          <div class="ml-left">
+            <div class="ml-icon ic-purple">🌸</div>
+            <div>
+              <div class="ml-name">Quiz</div>
+              <div class="ml-sub">Check in with your inner self · Free</div>
+            </div>
+          </div>
+          <span class="ml-arrow">›</span>
+        </a>
+      </li>
+
+      <li class="menu-item">
+        <a href="#" class="menu-link">
+          <div class="ml-left">
+            <div class="ml-icon ic-green">📖</div>
+            <div>
+              <div class="ml-name">Articles</div>
+              <div class="ml-sub">Psychology, made friendly</div>
+            </div>
+          </div>
+          <span class="ml-arrow">›</span>
+        </a>
+      </li>
+
+      <!-- STORIES SECTION -->
+      <li class="menu-section-label" style="transition-delay:.26s">
+        <span class="msl-text">Stories</span>
+        <span class="msl-line"></span>
+      </li>
+
+      <li class="menu-item witch">
+        <!-- witch card -->
+        <a href="stories.html" class="witch-card">
+          <span class="wc-icon">🧙‍♀️</span>
+          <div class="wc-body">
+            <div class="wc-title">การเดินทางของแม่มดน้อย</div>
+            <div class="wc-sub">เรื่องสั้นตอนละนิด · เกี่ยวกับการค้นหาตัวเอง</div>
+            <span class="wc-ep">Coming soon · ตอนที่ 1</span>
+          </div>
+        </a>
+      </li>
+
+      <!-- SHOP SECTION -->
+      <li class="menu-section-label" style="transition-delay:.34s">
+        <span class="msl-text">Shop</span>
+        <span class="msl-line"></span>
+      </li>
+
+      <li class="menu-item">
+        <a href="#" class="menu-link">
+          <div class="ml-left">
+            <div class="ml-icon ic-warm">📓</div>
+            <div>
+              <div class="ml-name">Digital Products</div>
+              <div class="ml-sub">Journals · Worksheets · Guides</div>
+            </div>
+          </div>
+          <span class="ml-arrow">›</span>
+        </a>
+      </li>
+
+      <li class="menu-item">
+        <a href="#" class="menu-link">
+          <div class="ml-left">
+            <div class="ml-icon ic-blue">✉️</div>
+            <div>
+              <div class="ml-name">Contact</div>
+              <div class="ml-sub">Let's talk</div>
+            </div>
+          </div>
+          <span class="ml-arrow">›</span>
+        </a>
+      </li>
+
+    </ul>
+
+    <div class="menu-bottom">
+      <a href="quiz.html" class="menu-cta">🌿 Take the quiz — it's free</a>
+      <div class="menu-footer">
+        <span class="mf-jp">心の中のノート · แทนใจ</span>
+        <span class="mf-sub">tanjainoto · your heart matters</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- DEMO PAGE -->
+<div class="demo-page">
+  <div class="demo-jp">心の中のノート</div>
+  <h1>tanjainoto</h1>
+  <p style="color:var(--text-xs); font-size:.82rem;">แทนใจ · บันทึกกลางใจ</p>
+  <div class="demo-hint">☰ &nbsp;tap the menu button</div>
+</div>
+
+<script>
+  const burger  = document.getElementById('burger');
+  const overlay = document.getElementById('menuOverlay');
+  const backdrop= document.getElementById('menuBackdrop');
+  const open  = () => { overlay.classList.add('open'); burger.classList.add('open'); document.body.style.overflow='hidden'; }
+  const close = () => { overlay.classList.remove('open'); burger.classList.remove('open'); document.body.style.overflow=''; }
+  burger.addEventListener('click', () => overlay.classList.contains('open') ? close() : open());
+  backdrop.addEventListener('click', close);
+  document.querySelectorAll('.menu-link, .witch-card').forEach(l => l.addEventListener('click', e => { e.preventDefault(); close(); }));
+  document.addEventListener('keydown', e => { if(e.key==='Escape') close(); });
+</script>
+</body>
+</html>
